@@ -9,7 +9,7 @@ import {
 import { FaShield } from "react-icons/fa6";
 import { IoIosUnlock } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,19 +17,34 @@ import {
   useLoginUserMutation,
 } from "@/redux/features/allApis/usersApi/usersApi";
 import SpinLoader from "@/components/loaders/SpinLoader";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setCredentials } from "@/redux/slices/authSlice";
 import { useToasts } from "react-toast-notifications";
-import image from "@/assets/login.png";
+import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const Login = () => {
+  const { user } = useSelector((state) => state.auth);
   const [loginUser, { isLoading }] = useLoginUserMutation();
   const [getUser] = useLazyGetAuthenticatedUserQuery();
   const dispatch = useDispatch();
+  const { data: homeControls } = useGetHomeControlsQuery();
   const [showPassword, setShowPassword] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
   const navigate = useNavigate();
   const { addToast } = useToasts();
+
+  const toastShownRef = useRef(false);
+
+  useEffect(() => {
+    if (user && !toastShownRef.current) {
+      toastShownRef.current = true;
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  const imageControl = homeControls?.find(
+    (control) => control.category === "login-image" && control.isSelected
+  );
 
   // React Hook Form setup
   const {
@@ -41,7 +56,7 @@ const Login = () => {
   } = useForm();
 
   // Watch form values
-  const watchInputCode = watch("inputCode", ""); // Watch validation code input
+  const watchInputCode = watch("inputCode", "");
 
   // Function to generate a random 4-digit verification code
   const generateVerificationCode = () => {
@@ -62,6 +77,18 @@ const Login = () => {
 
       if (loginData.token) {
         const { data: userData } = await getUser(loginData.token);
+        if (
+          userData?.status === "banned" ||
+          userData?.status === "deactivated" ||
+          userData?.status === null ||
+          userData?.status === undefined
+        ) {
+          addToast("Your account is deactivated or banned", {
+            appearance: "error",
+            autoDismiss: true,
+          });
+          return;
+        }
         dispatch(setCredentials({ token: loginData.token, user: userData }));
         addToast("Login successful", {
           appearance: "success",
@@ -95,7 +122,11 @@ const Login = () => {
         />
         <p>Login</p>
       </div>
-      <img className="h-2/5 w-full" src={image} alt="" />
+      <img
+        className="h-2/5 w-full"
+        src={`${import.meta.env.VITE_BASE_API_URL}${imageControl?.image}`}
+        alt=""
+      />
       <div className="w-full sm:p-6 text-[#6F8898]">
         <form onSubmit={handleSubmit(onSubmit)}>
           <h2 className="uppercase text-3xl font-medium text-center text-black">

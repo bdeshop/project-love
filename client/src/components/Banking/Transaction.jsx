@@ -54,10 +54,11 @@ const Transaction = ({ userId, availableBalance = 0 }) => {
     }
     const payload = {
       parentId: user?._id,
-      userId,
+      userId: userId,
       amount: Number(amount),
       type: action,
     };
+
     const result = await updateBalance(payload);
     if (result?.error) {
       addToast(result.error, {
@@ -66,6 +67,7 @@ const Transaction = ({ userId, availableBalance = 0 }) => {
       });
     }
     if (result?.data.modifiedCount > 0) {
+      alert(result);
       addToast(
         action === "deposit" ? "Deposit successful" : "Withdrawal successful",
         {

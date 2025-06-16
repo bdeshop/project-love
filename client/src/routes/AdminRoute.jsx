@@ -8,7 +8,7 @@ const AdminRoute = ({ children }) => {
 
   useEffect(() => {
     if (!token || !user || !user?.role || user?.role === "user") {
-      navigate("/");
+      navigate("/motheradmin");
     }
   }, [token, user, navigate]);
 

@@ -8,17 +8,28 @@ import Sidebar from "../Sidebar";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
+import { useGetColorControlsQuery } from "@/redux/features/allApis/colorControlApi/colorControlApi";
+import { useFetchUser } from "@/hooks/customHook";
 
 const Navbar = () => {
-  const { token, user } = useSelector((state) => state.auth);
+  const { token, user, singleUser } = useSelector((state) => state.auth);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { data: homeControls } = useGetHomeControlsQuery();
+  const { data: colorControls } = useGetColorControlsQuery();
+  const { fetchUser, loading } = useFetchUser(user?._id);
 
   const logoControl = homeControls?.find(
     (control) => control.category === "logo" && control.isSelected
   );
+  const navbarColorControl = colorControls?.find(
+    (colorControl) => colorControl.section === "home-navbar"
+  );
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const reloadBalance = () => {
+    fetchUser();
   };
 
   return (
@@ -30,7 +41,16 @@ const Navbar = () => {
             toggleSidebar={toggleSidebar}
           />
         )}
-        <div className="bg-[#ffc800] flex items-center justify-between px-3 py-2 ">
+        <div
+          style={{
+            backgroundColor: navbarColorControl?.backgroundColor,
+            color: navbarColorControl?.textColor,
+            fontSize: navbarColorControl?.fontSize
+              ? navbarColorControl?.fontSize
+              : "14px",
+          }}
+          className="flex items-center justify-between px-3 py-2 "
+        >
           <div className="flex flex-row items-center gap-2">
             {token && user && (
               <IoMenu
@@ -54,13 +74,16 @@ const Navbar = () => {
               <div className="flex flex-col items-start">
                 <p>@{user?.username}</p>
                 <div className="flex flex-row items-center gap-1 text-sm">
-                  <p>USD 0.00</p>
+                  <p>USD {singleUser?.balance?.toFixed(2) || "0.00"}</p>
                   <p className="text-red-500">
                     <span className="font-semibold text-black">Exp</span> (0.00)
                   </p>
                 </div>
               </div>
-              <TfiReload className="text-lg" />
+              <TfiReload
+                onClick={reloadBalance}
+                className={`text-lg ${loading && "animate-spin"}`}
+              />
             </div>
           )}
 
