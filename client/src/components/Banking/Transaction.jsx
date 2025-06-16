@@ -67,6 +67,7 @@ const Transaction = ({ userId, availableBalance = 0 }) => {
       });
     }
     if (result?.data.modifiedCount > 0) {
+      alert(result);
       addToast(
         action === "deposit" ? "Deposit successful" : "Withdrawal successful",
         {
