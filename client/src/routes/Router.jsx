@@ -8,7 +8,6 @@ import Banking from "@/components/Banking/Banking";
 import BetList from "@/components/BetList/BetList";
 import BetListLive from "@/components/BetListLive/BetListLive";
 import DeactiveGame from "@/components/DeactiveGame/DeactiveGame";
-import Game from "@/components/GameApi/Game";
 import HomeControl from "@/components/HomeControl/HomeControl";
 import LiveGame from "@/components/LiveGame/LiveGame";
 import MyAccount from "@/components/MyAccount/MyAccount";
@@ -19,7 +18,6 @@ import SportsLeaguesLayout from "@/layout/SportsLeaguesLayout";
 import AccountStatement from "@/pages/account-statement/AccountStatement";
 import ActivityLog from "@/pages/activity-log/ActivityLog";
 import BalanceOverview from "@/pages/balance-overview/BalanceOverview";
-import Banner from "@/pages/Banner";
 import BetsHistory from "@/pages/bets-history/BetsHistory";
 import CurrentBets from "@/pages/current-bets/CurrentBets";
 import Casino from "@/pages/home/Casino/Casino";
@@ -42,6 +40,11 @@ import DemoGame from "@/pages/home/DemoGame/DemoGame";
 import DashboardLayout from "@/layout/DashboardLayout";
 import UsersData from "@/pages/UsersData/UsersData";
 import AddGame from "@/pages/dashboard/AddGame";
+import MotherAdminRoute from "./MotherAdminRoute";
+import ColorControl from "@/pages/dashboard/ColorControl";
+import { NotFound } from "@/pages/NotFound";
+import GameApi from "@/components/GameApi/GameApi";
+import LoginForm from "@/pages/LoginForm";
 
 const router = createBrowserRouter([
   {
@@ -138,11 +141,31 @@ const router = createBrowserRouter([
       { path: "", element: <AdminDashboard /> },
       { path: "generalsetting", element: <Setting /> },
       { path: "adminsetting", element: <AdminSetting /> },
-      { path: "gameapi", element: <Game /> },
-      { path: "homecontrol", element: <HomeControl /> },
+      { path: "gameapi", element: <GameApi /> },
+      {
+        path: "homecontrol",
+        element: (
+          <MotherAdminRoute>
+            <HomeControl />
+          </MotherAdminRoute>
+        ),
+      },
+      {
+        path: "colorcontrol",
+        element: (
+          <MotherAdminRoute>
+            <ColorControl />
+          </MotherAdminRoute>
+        ),
+      },
       {
         path: "addgame",
-      element: <AddGame />,
+        element: (
+          <MotherAdminRoute>
+            {" "}
+            <AddGame />{" "}
+          </MotherAdminRoute>
+        ),
       },
       { path: "myaccount", element: <MyAccount /> },
       { path: "betlist", element: <BetList /> },
@@ -154,11 +177,26 @@ const router = createBrowserRouter([
       { path: "usersdata/:role", element: <UsersData /> },
     ],
   },
-  { path: "/admin", element: <Banner /> },
+  {
+    path: "/motheradmin",
+    element: <LoginForm role="mother-admin" title="Mother Admin" />,
+  },
+  { path: "/admin", element: <LoginForm role="admin" title="Admin" /> },
+  {
+    path: "/subadmin",
+    element: <LoginForm role="sub-admin" title="Sub Admin" />,
+  },
+  { path: "/master", element: <LoginForm role="master" title="Master" /> },
+  { path: "/agent", element: <LoginForm role="agent" title="Agent" /> },
+  {
+    path: "/subagent",
+    element: <LoginForm role="sub-agent" title="Sub Agent" />,
+  },
   { path: "/accountsummary", element: <AccountSummary /> },
   { path: "/accounttabs", element: <AccountTabs /> },
   { path: "/accountstatementtabs", element: <AccountStatementTabs /> },
   { path: "/profile", element: <Profile /> },
+  { path: "*", element: <NotFound /> },
 ]);
 
 export default router;

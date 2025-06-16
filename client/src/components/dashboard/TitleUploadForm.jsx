@@ -3,7 +3,7 @@ import { IoAdd } from "react-icons/io5";
 import { useAddHomeControlMutation } from "../../redux/features/allApis/homeControlApi/homeControlApi";
 import { uploadImage } from "../../hooks/files";
 import SpinLoader from "../loaders/SpinLoader";
-import { toast } from "react-hot-toast";
+import { useToasts } from "react-toast-notifications";
 
 const TitleUploadForm = ({ closeModal }) => {
   const [addHomeControl] = useAddHomeControlMutation();
@@ -11,6 +11,7 @@ const TitleUploadForm = ({ closeModal }) => {
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [title, setTitle] = useState("");
+  const { addToast } = useToasts();
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -41,7 +42,10 @@ const TitleUploadForm = ({ closeModal }) => {
           };
           const result = await addHomeControl(titleInfo);
           if (result.data.insertedId) {
-            toast.success("Title added successfully");
+            addToast("Title added successfully", {
+              appearance: "success",
+              autoDismiss: true,
+            });
             setImagePreview(null);
             setImageFile(null);
             setLoading(false);
@@ -51,10 +55,16 @@ const TitleUploadForm = ({ closeModal }) => {
         // eslint-disable-next-line no-unused-vars
       } catch (error) {
         setLoading(false);
-        toast.error("Failed to add title");
+        addToast("Failed to add title", {
+          appearance: "error",
+          autoDismiss: true,
+        });
       }
     } else {
-      toast.error("Failed to upload image");
+      addToast("Failed to upload image", {
+        appearance: "error",
+        autoDismiss: true,
+      });
     }
   };
 

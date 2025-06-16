@@ -8,8 +8,10 @@ const { upload, deleteFile } = require("./utils");
 
 // import API modules
 const usersApi = require("./apis/usersApi/usersApi");
+const colorControlApi = require("./apis/colorControlApi/colorControlApi");
 const gameApi = require("./apis/gameApi/gameApi");
 const homeControlApi = require("./apis/homeControlApi/homeControlApi");
+const bankingApi = require("./apis/bankingApi/bankingApi");
 
 const port = process.env.PORT || 5000;
 
@@ -18,11 +20,11 @@ const corsConfig = {
   origin: [
     "http://localhost:5173",
     "http://localhost:5174",
-    "https://bajiboss.com",
-    "http://bajiboss.com",
-    "http://www.bajiboss.com",
-    "www.bajiboss.com",
-    "bajiboss.com",
+    `https://${process.env.SITE_URL}`,
+    `http://${process.env.SITE_URL}`,
+    `http://www.${process.env.SITE_URL}`,
+    `www.${process.env.SITE_URL}`,
+    `${process.env.SITE_URL}`,
     "*",
   ],
   credentials: true,
@@ -82,13 +84,19 @@ async function run() {
 
     // Collections
     const usersCollection = client.db("baji").collection("users");
+    const colorControlsCollection = client
+      .db("baji")
+      .collection("colorControls");
     const gamesCollection = client.db("baji").collection("games");
     const homeControlsCollection = client.db("baji").collection("homeControls");
+    const bankingCollection = client.db("baji").collection("banking");
 
     // API routes
-    app.use("/users", usersApi(usersCollection));
+    app.use("/users", usersApi(usersCollection, bankingCollection));
+    app.use("/color-controls", colorControlApi(colorControlsCollection));
     app.use("/games", gameApi(gamesCollection));
     app.use("/home-controls", homeControlApi(homeControlsCollection));
+    app.use("/bankings", bankingApi(bankingCollection));
 
     await client.db("admin").command({ ping: 1 });
     console.log("Connected to MongoDB!!!✅");
