@@ -20,6 +20,8 @@ const corsConfig = {
   origin: [
     "http://localhost:5173",
     "http://localhost:5174",
+    "https://velki.oraclesoft.org/",
+    "https://velki.oraclesoft.org",
     `https://${process.env.SITE_URL}`,
     `http://${process.env.SITE_URL}`,
     `http://www.${process.env.SITE_URL}`,

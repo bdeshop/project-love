@@ -23,7 +23,7 @@
     "multer": "^1.4.5-lts.1"
   },
   "resolutions": {
-    "inflight": "latest"
+  "inflight": "1.0.6"
   },
   "devDependencies": {
     "npm-force-resolutions": "^0.0.10"

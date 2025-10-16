@@ -49,11 +49,11 @@ const Footer = () => {
           KYC
         </Link>
         <Link to="/responsible-gaming" className="px-3 border-slate-400">
-          Responsible Gaming
+          Responsible Gaming  
         </Link>
       </div>
       <p className="text-[#6F8898] text-sm text-center">
-        © 2025 Oracle Technology LLC কপিরাইট। সমস্ত অধিকার সংরক্ষিত
+        © 2025 Oracle Technology LLC কপিরাইট। সমস্ত অধিকার সংরক্ষিত |
       </p>
     </div>
   );
