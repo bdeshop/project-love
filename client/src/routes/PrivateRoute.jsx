@@ -1,20 +1,19 @@
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import toast from "react-hot-toast";
+import { AuthContext } from "@/context/AuthContext";
+import { useContext } from "react";
+import { Navigate, useLocation } from "react-router-dom";
+
+
 
 const PrivateRoute = ({ children }) => {
-  const { token, user } = useSelector((state) => state.auth);
-  const navigate = useNavigate();
+  const {user} = useContext(AuthContext)
+  const location = useLocation();
 
-  useEffect(() => {
-    if (!token || !user) {
-      toast.error("Unauthorized access");
-      navigate("/");
-    }
-  }, [token, user, navigate]);
+  // Check if user is logged in and has role "Mother Admin"
+  if (!user || user.role !== "US") {
+    return <Navigate to="/login" state={{ from: location?.pathname }} />;
+  }
 
-  return token ? children : null;
+  return children;
 };
 
 export default PrivateRoute;

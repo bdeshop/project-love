@@ -5,18 +5,18 @@ import { IoMdLogIn } from "react-icons/io";
 import { IoMenu } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import Sidebar from "../Sidebar";
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useContext, useState } from "react";
 import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 import { useGetColorControlsQuery } from "@/redux/features/allApis/colorControlApi/colorControlApi";
-import { useFetchUser } from "@/hooks/customHook";
+import { AuthContext } from "@/context/AuthContext";
 
 const Navbar = () => {
-  const { token, user, singleUser } = useSelector((state) => state.auth);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { data: homeControls } = useGetHomeControlsQuery();
   const { data: colorControls } = useGetColorControlsQuery();
-  const { fetchUser, loading } = useFetchUser(user?._id);
+
+  // ✅ AuthContext থেকে ইউজার নেওয়া
+  const { user, reloadBalance, loading } = useContext(AuthContext);
 
   const logoControl = homeControls?.find(
     (control) => control.category === "logo" && control.isSelected
@@ -24,12 +24,9 @@ const Navbar = () => {
   const navbarColorControl = colorControls?.find(
     (colorControl) => colorControl.section === "home-navbar"
   );
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const reloadBalance = () => {
-    fetchUser();
   };
 
   return (
@@ -41,6 +38,7 @@ const Navbar = () => {
             toggleSidebar={toggleSidebar}
           />
         )}
+
         <div
           style={{
             backgroundColor: navbarColorControl?.backgroundColor,
@@ -51,8 +49,9 @@ const Navbar = () => {
           }}
           className="flex items-center justify-between px-3 py-2 "
         >
+          {/* Left side */}
           <div className="flex flex-row items-center gap-2">
-            {token && user && (
+            {user && (
               <IoMenu
                 className="text-black text-3xl cursor-pointer"
                 onClick={toggleSidebar}
@@ -61,20 +60,19 @@ const Navbar = () => {
             <Link to="/">
               <img
                 className="w-[84px] h-[26px]"
-                src={`${import.meta.env.VITE_BASE_API_URL}${
-                  logoControl?.image
-                }`}
-                alt=""
+                src={`${import.meta.env.VITE_BASE_API_URL}${logoControl?.image}`}
+                alt="Logo"
               />
             </Link>
           </div>
 
-          {token && user && (
+          {/* Right side */}
+          {user ? (
             <div className="flex flex-row items-center gap-2">
               <div className="flex flex-col items-start">
                 <p>@{user?.username}</p>
                 <div className="flex flex-row items-center gap-1 text-sm">
-                  <p>USD {singleUser?.balance?.toFixed(2) || "0.00"}</p>
+                  <p>USD {user?.balance?.toFixed(2) || "0.00"}</p>
                   <p className="text-red-500">
                     <span className="font-semibold text-black">Exp</span> (0.00)
                   </p>
@@ -85,9 +83,7 @@ const Navbar = () => {
                 className={`text-lg ${loading && "animate-spin"}`}
               />
             </div>
-          )}
-
-          {!token && !user && (
+          ) : (
             <div className="flex items-center justify-center gap-3">
               <Link
                 target="_blank"

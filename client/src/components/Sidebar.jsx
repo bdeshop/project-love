@@ -16,7 +16,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
   const handleLogout = () => {
     dispatch(logout());
-    localStorage.removeItem("token");
+    localStorage.removeItem("users");
     addToast("Logout successful", {
       appearance: "success",
       autoDismiss: true,

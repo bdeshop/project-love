@@ -45,6 +45,7 @@ import ColorControl from "@/pages/dashboard/ColorControl";
 import { NotFound } from "@/pages/NotFound";
 import GameApi from "@/components/GameApi/GameApi";
 import LoginForm from "@/pages/LoginForm";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
   {
@@ -57,39 +58,44 @@ const router = createBrowserRouter([
       },
       {
         path: "/games/demo/:id",
-        element: <DemoGame />,
+        element: (
+          <PrivateRoute>
+            {" "}
+            <DemoGame />{" "}
+          </PrivateRoute>
+        ),
       },
       {
         path: "/balance-overview",
-        element: <BalanceOverview />,
+        element: <PrivateRoute> <BalanceOverview />  </PrivateRoute>,
       },
       {
         path: "/current-bets",
-        element: <CurrentBets />,
+        element:  <PrivateRoute> <CurrentBets /> </PrivateRoute>,
       },
       {
         path: "/account-statement",
-        element: <AccountStatement />,
+        element: <PrivateRoute> <AccountStatement /> </PrivateRoute>,
       },
       {
         path: "/bets-history",
-        element: <BetsHistory />,
+        element: <PrivateRoute><BetsHistory /> </PrivateRoute>,
       },
       {
         path: "/profit-loss",
-        element: <ProfitAndLoss />,
+        element: <PrivateRoute> <ProfitAndLoss /> </PrivateRoute>,
       },
       {
         path: "/activity-log",
-        element: <ActivityLog />,
+        element: <PrivateRoute> <ActivityLog /> </PrivateRoute>,
       },
       {
         path: "/my-profile",
-        element: <MyProfile />,
+        element: <PrivateRoute><MyProfile /> </PrivateRoute>,
       },
       {
         path: "/setting",
-        element: <Settings />,
+        element: <PrivateRoute> <Settings /> </PrivateRoute>,
       },
       { path: "/login", element: <Login /> },
       { path: "/signup", element: <Register /> },
