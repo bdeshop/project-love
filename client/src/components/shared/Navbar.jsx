@@ -5,22 +5,49 @@ import { IoMdLogIn } from "react-icons/io";
 import { IoMenu } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import Sidebar from "../Sidebar";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 import { useGetColorControlsQuery } from "@/redux/features/allApis/colorControlApi/colorControlApi";
 import { AuthContext } from "@/context/AuthContext";
+import axios from "axios";
 
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { data: homeControls } = useGetHomeControlsQuery();
   const { data: colorControls } = useGetColorControlsQuery();
+  const [bgColor, setBgColor] = useState("#ffffff");
+  const [textColor, setTextColor] = useState("#000000");
+  const [fontSize, setFontSize] = useState(16);
 
   // ✅ AuthContext থেকে ইউজার নেওয়া
-  const { user, reloadBalance, loading } = useContext(AuthContext);
+  const { user, reload, loading,balance,logo } = useContext(AuthContext);
 
-  const logoControl = homeControls?.find(
-    (control) => control.category === "logo" && control.isSelected
-  );
+  const baseUrl = import.meta.env.VITE_API_URL;
+  const logoUrl = logo ? `${baseUrl}${logo.startsWith("/") ? "" : "/"}${logo}` : null;
+
+  // Helper to safely get full image URL
+  const getImageUrl = (img) => {
+    if (!img) return "/logo.png"; // লোগো এবং ফেভিকনের জন্য ডিফল্ট
+    if (img.startsWith("http")) return img;
+    const cleanImg = img.startsWith("/uploads/") ? img.replace("/uploads/", "") : img;
+    return `${import.meta.env.VITE_API_URL}/uploads/${cleanImg}`;
+  };
+
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/navbar`)
+      .then((res) => {
+        const data = res.data;
+        setBgColor(data.bgColor || "#ffffff");
+        setTextColor(data.textColor || "#000000");
+        setFontSize(data.fontSize || 16);
+      })
+      .catch((err) => {
+        console.error("Fetch error:", err);
+        toast.error("Failed to fetch navbar settings!");
+      });
+  }, []);
+
   const navbarColorControl = colorControls?.find(
     (colorControl) => colorControl.section === "home-navbar"
   );
@@ -36,15 +63,16 @@ const Navbar = () => {
           <Sidebar
             isSidebarOpen={isSidebarOpen}
             toggleSidebar={toggleSidebar}
+      
           />
         )}
 
         <div
           style={{
-            backgroundColor: navbarColorControl?.backgroundColor,
-            color: navbarColorControl?.textColor,
-            fontSize: navbarColorControl?.fontSize
-              ? navbarColorControl?.fontSize
+            backgroundColor: bgColor,
+            color: textColor,
+            fontSize: fontSize
+              ? fontSize
               : "14px",
           }}
           className="flex items-center justify-between px-3 py-2 "
@@ -60,7 +88,7 @@ const Navbar = () => {
             <Link to="/">
               <img
                 className="w-[84px] h-[26px]"
-                src={`${import.meta.env.VITE_BASE_API_URL}${logoControl?.image}`}
+                src={logoUrl}
                 alt="Logo"
               />
             </Link>
@@ -72,14 +100,14 @@ const Navbar = () => {
               <div className="flex flex-col items-start">
                 <p>@{user?.username}</p>
                 <div className="flex flex-row items-center gap-1 text-sm">
-                  <p>USD {user?.balance?.toFixed(2) || "0.00"}</p>
+                  <p>USD {balance || "0.00"}</p>
                   <p className="text-red-500">
                     <span className="font-semibold text-black">Exp</span> (0.00)
                   </p>
                 </div>
               </div>
               <TfiReload
-                onClick={reloadBalance}
+                onClick={reload}
                 className={`text-lg ${loading && "animate-spin"}`}
               />
             </div>

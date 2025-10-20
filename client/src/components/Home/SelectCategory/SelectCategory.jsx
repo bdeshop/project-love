@@ -8,7 +8,7 @@ import slotIcon from "@/assets/icons/slot.svg";
 import tableIcon from "@/assets/icons/table.svg";
 import endgameIcon from "@/assets/icons/endgame.svg";
 import { useGetGamesQuery } from "@/redux/features/allApis/gameApi/gameApi";
-import { useGetColorControlsQuery } from "@/redux/features/allApis/colorControlApi/colorControlApi";
+import axios from "axios";
 
 const categories = [
   {
@@ -48,26 +48,40 @@ const categories = [
     description: "Egames management and preferences.",
   },
 ];
+
 export function SelectCategory() {
   const { data: games } = useGetGamesQuery();
-  const { data: colorControls } = useGetColorControlsQuery();
   const activatedGames = games?.filter((game) => game.isActive);
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
   const [currentPage, setCurrentPage] = useState(0);
   const categoryContainerRef = useRef(null);
   const [isHoveredValue, setIsHoveredValue] = useState("");
-
-  const categorySelectControl = colorControls?.find(
-    (colorControl) => colorControl.section === "home-category-select"
-  );
-
-  const navbarColorControl = colorControls?.find(
-    (colorControl) => colorControl.section === "home-navbar"
-  );
+  const [webMenuBgColor, setWebMenuBgColor] = useState("#ffffff");
+  const [webMenuTextColor, setWebMenuTextColor] = useState("#000000");
+  const [webMenuFontSize, setWebMenuFontSize] = useState(16);
+  const [webMenuHoverColor, setWebMenuHoverColor] = useState("#cccccc");
+  const [webMenuHoverTextColor, setWebMenuHoverTextColor] = useState("#cccccc");
 
   const filteredGames = activatedGames?.filter(
     (game) => game.category === selectedCategory.value
   );
+
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/webmenu`)
+      .then((res) => {
+        const data = res.data;
+        setWebMenuBgColor(data.webMenuBgColor || "#ffffff");
+        setWebMenuTextColor(data.webMenuTextColor || "#000000");
+        setWebMenuFontSize(data.webMenuFontSize || 16);
+        setWebMenuHoverColor(data.webMenuHoverColor || "#cccccc");
+        setWebMenuHoverTextColor(data.webMenuHoverTextColor || "#cccccc");
+      })
+      .catch((err) => {
+        console.error("Fetch error:", err);
+
+      });
+  }, []);
 
   const handleScroll = () => {
     const scrollLeft = categoryContainerRef.current.scrollLeft;
@@ -98,11 +112,9 @@ export function SelectCategory() {
       <div className="relative">
         <div
           style={{
-            backgroundColor: categorySelectControl?.backgroundColor,
-            color: categorySelectControl?.textColor,
-            fontSize: categorySelectControl?.fontSize
-              ? categorySelectControl?.fontSize
-              : "14px",
+            backgroundColor: webMenuBgColor,
+            color: webMenuTextColor,
+            fontSize: webMenuFontSize ? `${webMenuFontSize}px` : "14px",
           }}
           ref={categoryContainerRef}
           className="flex justify-start px-2 pt-2 pb-8 gap-2 w-full overflow-x-auto no-scrollbar h-auto bg-[#333333] scroll-smooth"
@@ -112,16 +124,16 @@ export function SelectCategory() {
               style={{
                 backgroundColor:
                   category.value === isHoveredValue
-                    ? categorySelectControl?.hoverBackgroundColor
+                    ? webMenuHoverColor
                     : category.value === selectedCategory.value
-                    ? categorySelectControl?.hoverBackgroundColor
+                    ? webMenuHoverColor
                     : "transparent",
                 color:
                   category.value === isHoveredValue
-                    ? categorySelectControl?.hoverTextColor
+                    ? webMenuHoverTextColor
                     : category.value === selectedCategory.value
-                    ? categorySelectControl?.hoverTextColor
-                    : categorySelectControl?.textColor,
+                    ? webMenuHoverTextColor
+                    : webMenuTextColor,
               }}
               onMouseEnter={() => setIsHoveredValue(category.value)}
               onMouseLeave={() => setIsHoveredValue("")}
@@ -159,9 +171,7 @@ export function SelectCategory() {
             <button
               style={{
                 backgroundColor:
-                  currentPage === index
-                    ? navbarColorControl?.backgroundColor
-                    : "#474a4e",
+                  currentPage === index ? webMenuBgColor : "#474a4e",
               }}
               key={index}
               className={`h-2 mx-1 rounded-full ${

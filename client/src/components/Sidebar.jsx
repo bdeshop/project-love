@@ -8,8 +8,11 @@ import { BsGlobe2 } from "react-icons/bs";
 import { useDispatch } from "react-redux";
 import { useToasts } from "react-toast-notifications";
 import { logout } from "@/redux/slices/authSlice";
+import { useContext } from "react";
+import { AuthContext } from "@/context/AuthContext";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
+  const { logout } = useContext(AuthContext);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { addToast } = useToasts();

@@ -1,5 +1,11 @@
 import { useForm } from "react-hook-form";
-import { FaChevronLeft, FaEye, FaEyeSlash, FaUser, FaRedo } from "react-icons/fa";
+import {
+  FaChevronLeft,
+  FaEye,
+  FaEyeSlash,
+  FaUser,
+  FaRedo,
+} from "react-icons/fa";
 import { FaShield } from "react-icons/fa6";
 import { IoIosUnlock } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
@@ -8,18 +14,23 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToasts } from "react-toast-notifications";
 import { AuthContext } from "@/context/AuthContext";
-
+import axios from "axios";
 
 const Login = () => {
-  const { user, setUser, loading, setLoading } = useContext(AuthContext);
+  const { user, setUser, loading, setLoading,logo } = useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
+  const [loginImage, setLoginImage] = useState(""); // State for login image
+  const [id, setId] = useState(""); // State for image ID
   const navigate = useNavigate();
   const { addToast } = useToasts();
-
   const toastShownRef = useRef(false);
 
-  // যদি ইতিমধ্যে লগইন করা থাকে → redirect
+
+  const baseUrl = import.meta.env.VITE_API_URL;
+  const logoUrl = logo ? `${baseUrl}${logo.startsWith("/") ? "" : "/"}${logo}` : null;
+
+  // Redirect if already logged in
   useEffect(() => {
     if (user && !toastShownRef.current) {
       toastShownRef.current = true;
@@ -27,7 +38,7 @@ const Login = () => {
     }
   }, [user, navigate]);
 
-  // Random Verification Code Generate
+  // Generate random verification code
   const generateVerificationCode = () => {
     const code = Math.floor(1000 + Math.random() * 9000).toString();
     setVerificationCode(code);
@@ -36,6 +47,37 @@ const Login = () => {
   useEffect(() => {
     generateVerificationCode();
   }, []);
+
+  // Fetch login image
+  const fetchLoginImage = async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin-login-image`);
+      if (res.data && res.data.loginImageUrl) {
+        setLoginImage(res.data.loginImageUrl);
+        setId(res.data._id);
+        console.log("Fetched login image:", res.data.loginImageUrl);
+      }
+    } catch (err) {
+      console.error("Error fetching login image:", err);
+      addToast("Failed to fetch login image", {
+        appearance: "error",
+        autoDismiss: true,
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchLoginImage();
+  }, []);
+
+  // Helper to safely get full image URL
+  const getImageUrl = (img) => {
+    if (!img) return "/placeholder.png";
+    if (img.startsWith("http")) return img;
+    // Remove leading /uploads/ if present to avoid duplication
+    const cleanImg = img.startsWith("/uploads/") ? img.replace("/uploads/", "") : img;
+    return `${import.meta.env.VITE_API_URL}/uploads/${cleanImg}`;
+  };
 
   // React Hook Form setup
   const {
@@ -47,33 +89,45 @@ const Login = () => {
   } = useForm();
 
   const watchInputCode = watch("inputCode", "");
+  const isLoginDisabled = !(watchInputCode === verificationCode);
 
-  // Submit Function
+  // Handle login submit
   const onSubmit = async (data) => {
     const { username, password } = data;
 
     try {
       setLoading(true);
 
-      // এখানে তুমি backend call করতে পারো:
-      // const res = await axios.post('/api/login', { username, password });
-      // const userData = res.data;
+      // Backend call
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/admins/user-login`,
+        {
+          userName: username,
+          password: password,
+        }
+      );
 
-      // এখন ডেমোর জন্য ধরো login সবসময় successful:
-      const userData = { username, role: "user" };
+      const { user: userData } = res.data;
 
-      // ইউজার সেট করো Context এ
+      // Save to Context + LocalStorage
       setUser(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
 
       addToast("Login successful", {
         appearance: "success",
         autoDismiss: true,
       });
 
-      navigate("/");
-
+      // Navigate based on role
+      if (userData.role === "MA") navigate("/ma/mother-admin");
+      else if (userData.role === "SA") navigate("/sa/sub-admin");
+      else navigate("/");
     } catch (error) {
-      addToast("Invalid username or password", {
+      console.error("Login Error:", error);
+      const msg =
+        error.response?.data?.message || "Invalid username or password";
+
+      addToast(msg, {
         appearance: "error",
         autoDismiss: true,
       });
@@ -82,10 +136,9 @@ const Login = () => {
     }
   };
 
-  const isLoginDisabled = !(watchInputCode === verificationCode);
-
   return (
-    <div className="bg-white h-screen">
+    <div className="bg-white h-screen flex flex-col">
+      {/* Header */}
       <div className="relative bg-slate-600 px-3 py-3 text-white text-center">
         <FaChevronLeft
           className="absolute left-0 top-1/2 transform -translate-y-1/2 ml-2 cursor-pointer"
@@ -94,9 +147,23 @@ const Login = () => {
         <p>Login</p>
       </div>
 
-      <div className="w-full sm:p-6 text-[#6F8898]">
+      {/* Image Section */}
+      <div className="w-full flex justify-center mb-6">
+        <img
+          src={getImageUrl(loginImage)}
+          alt="Login Banner"
+          className="w-full max-w-md h-40 object-cover rounded-lg"
+          onError={(e) => {
+            e.target.src = "/placeholder.png";
+            console.log(`Failed to load login image: ${getImageUrl(loginImage)}`);
+          }}
+        />
+      </div>
+
+      {/* Login Form */}
+      <div className="w-full sm:p-6 text-[#6F8898] flex-1">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <h2 className="uppercase text-3xl font-medium text-center text-black">
+          <h2 className="uppercase text-3xl font-medium text-center text-black mb-6">
             LOGIN
           </h2>
 
@@ -154,7 +221,9 @@ const Login = () => {
               <FaShield className="absolute text-2xl left-2 top-1/2 transform -translate-y-1/2" />
               <Input
                 type="text"
-                {...register("inputCode", { required: "Validation code is required" })}
+                {...register("inputCode", {
+                  required: "Validation code is required",
+                })}
                 placeholder="Validation Code"
                 className="pl-12 pr-10 h-12 rounded-lg focus:outline-none border border-black bg-transparent w-full placeholder:text-lg"
               />

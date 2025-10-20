@@ -1,9 +1,12 @@
 import PageHeader from "@/components/shared/PageHeader";
 import { useGetBankingsQuery } from "@/redux/features/allApis/bankingApi/bankingApi";
+import { useContext } from "react";
+import { AuthContext } from "@/context/AuthContext"; // adjust the path if needed
 import { useSelector } from "react-redux";
 
 const BalanceOverview = () => {
-  const { singleUser, user } = useSelector((state) => state.auth);
+  const { user,balance } = useContext(AuthContext); // ⬅️ Using AuthContext instead of Redux
+  const { singleUser } = useSelector((state) => state.auth);
   const { data: bankings, isLoading, isError } = useGetBankingsQuery();
 
   const myBankings = bankings?.filter(
@@ -43,17 +46,17 @@ const BalanceOverview = () => {
         {/* Current Balance Card */}
         <div className="bg-[#262c32] p-3 rounded-2xl">
           <h1 className="text-xl font-bold text-white mb-2">Your Balances</h1>
-          <div className="flex flex-row items-center gap-3 ">
+          <div className="flex flex-row items-center gap-3">
             <p className="text-sm font-bold bg-yellow-500 py-0.5 px-1 rounded-lg">
               USD
             </p>
             <p className="text-2xl font-bold text-white leading-3">
-              {singleUser?.balance?.toFixed(2) || "0.00"}
+              {balance || "0.00"}
             </p>
           </div>
         </div>
 
-        {/* Latest Transaction (Existing) */}
+        {/* Latest Transaction */}
         {myBankings?.length > 0 && (
           <div className="bg-blue-50 border border-gray-300 rounded-2xl overflow-hidden mt-5">
             <div className="bg-blue-100 px-4 py-2 text-sm font-semibold text-gray-700">
@@ -91,14 +94,12 @@ const BalanceOverview = () => {
               <p className="text-sm text-gray-700 flex items-center">
                 From:{" "}
                 <span className="text-gray-500">
-                  {" "}
                   {myBankings[0]?.parentInfo?.username || "System"}
                 </span>
               </p>
               <p className="text-sm text-gray-700 flex items-center">
                 To:{" "}
                 <span className="text-gray-500">
-                  {" "}
                   {myBankings[0]?.userInfo?.username || "System"}
                 </span>
               </p>
@@ -106,7 +107,7 @@ const BalanceOverview = () => {
           </div>
         )}
 
-        {/* Last 5 Transactions Section */}
+        {/* Last 5 Transactions */}
         <div className="mt-8">
           <h2 className="text-lg font-bold mb-3">Transaction History</h2>
 
@@ -133,7 +134,6 @@ const BalanceOverview = () => {
                   </div>
                   <div className="text-right">
                     <div className="flex items-center gap-2">
-                      {" "}
                       <p className="text-xs text-gray-500">
                         From:{" "}
                         {transaction.type === "deposit"

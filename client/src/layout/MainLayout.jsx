@@ -1,26 +1,77 @@
-import Footer from "@/components/shared/Footer";
-import Navbar from "@/components/shared/Navbar";
+import { useState, useEffect } from "react";
 import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 import { checkUserStatus } from "@/redux/slices/authSlice";
-import { useEffect } from "react";
-import { Helmet } from "react-helmet-async";
 import { useDispatch } from "react-redux";
+import { Helmet } from "react-helmet-async";
 import { Outlet } from "react-router-dom";
+import axios from "axios";
+import { useToasts } from "react-toast-notifications";
+import Footer from "@/components/shared/Footer";
+import Navbar from "@/components/shared/Navbar";
 
 const MainLayout = () => {
   const { data: homeControls } = useGetHomeControlsQuery();
   const dispatch = useDispatch();
+  const { addToast } = useToasts();
+  const [title, setTitle] = useState("My App"); // ডিফল্ট টাইটেল
+  const [favicon, setFavicon] = useState("/favicon.ico"); // ডিফল্ট ফেভিকন
+  const [id, setId] = useState(""); // সেটিংসের আইডি
+  const [logo, setLogo] = useState("/logo.png"); // ডিফল্ট লোগো
+  const [logoId, setLogoId] = useState(""); // লোগোর আইডি
 
-  const title = homeControls?.find(
-    (control) => control.category === "title" && control.isSelected
-  );
-  const logoControl = homeControls?.find(
-    (control) => control.category === "logo" && control.isSelected
-  );
+  // Helper to safely get full image URL
+  const getImageUrl = (img) => {
+    if (!img) return "/logo.png"; // লোগো এবং ফেভিকনের জন্য ডিফল্ট
+    if (img.startsWith("http")) return img;
+    const cleanImg = img.startsWith("/uploads/") ? img.replace("/uploads/", "") : img;
+    return `${import.meta.env.VITE_API_URL}/uploads/${cleanImg}`;
+  };
 
+  // সেটিংস ফেচ
+  const fetchSettings = async () => {
+    try {
+      console.log("Fetching settings from:", `${import.meta.env.VITE_API_URL}/api/settings`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/settings`);
+      console.log("Settings response data:", res.data);
+      if (res.data) {
+        setTitle(res.data.title || "My App");
+        setFavicon(res.data.faviconUrl || "/favicon.ico");
+        if (res.data._id) setId(res.data._id);
+      }
+    } catch (err) {
+      console.error("Fetch settings error:", err.response ? err.response.data : err.message);
+      addToast("Failed to fetch settings", {
+        appearance: "error",
+        autoDismiss: true,
+      });
+    }
+  };
+
+  // লোগো ফেচ
+  const fetchLogo = async () => {
+    try {
+      console.log("Fetching logo from:", `${import.meta.env.VITE_API_URL}/api/logo`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/logo`);
+      console.log("Logo response data:", response.data);
+      setLogo(response.data ? response.data.path : "/logo.png");
+      setLogoId(response.data ? response.data._id : "");
+    } catch (error) {
+      console.error("Error fetching logo:", error);
+      addToast("Failed to fetch logo", {
+        appearance: "error",
+        autoDismiss: true,
+      });
+      setLogo("/logo.png"); // ফলব্যাক লোগো
+    }
+  };
+
+  // ফেচ ডেটা এবং চেক ইউজার স্ট্যাটাস
   useEffect(() => {
     dispatch(checkUserStatus());
+    fetchSettings();
+    fetchLogo();
   }, [dispatch]);
+
   return (
     <div
       style={{
@@ -31,21 +82,21 @@ const MainLayout = () => {
       className="h-screen flex justify-center"
     >
       <Helmet>
-        <title>{`${title?.title || "***"}`} | Official</title>
-        <link
-          rel="icon"
-          type="image/svg+xml"
-          href={`${import.meta.env.VITE_BASE_API_URL}${title?.image}`}
-        />
+        <title>{`${title || "My App"} | Official`}</title>
+        <link rel="icon" type="image/svg+xml" href={getImageUrl(favicon)} />
       </Helmet>
       <div className="hidden lg:flex w-[30%] md:w-[20%] items-center justify-center">
         <img
-          src={`${import.meta.env.VITE_BASE_API_URL}${logoControl?.image}`}
-          alt=""
+          src={getImageUrl(logo)}
+          alt="Logo"
+          className="max-w-full h-auto"
+          onError={(e) => {
+            e.target.src = "/logo.png";
+            console.log(`Failed to load logo image: ${getImageUrl(logo)}`);
+          }}
         />
       </div>
       <div className="w-full md:w-[60%] lg:w-[40%] xl:w-[30%] bg-[#eef6fb] overflow-y-auto">
-        {/* content goes here */}
         <Navbar />
         <Outlet />
         <Footer />

@@ -1,21 +1,164 @@
-import { useGetColorControlsQuery } from "@/redux/features/allApis/colorControlApi/colorControlApi";
-import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BsStopwatchFill, BsHddRackFill } from "react-icons/bs";
 import { FaCalendarDay } from "react-icons/fa";
 import { FaCalendarDays, FaTrophy } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const SportsCategory = () => {
   const [selectedCategory, setSelectedCategory] = useState("in-play");
-  const { data: homeControls } = useGetHomeControlsQuery();
-  const { data: colorControls } = useGetColorControlsQuery();
   const [isHoveredValue, setIsHoveredValue] = useState("");
+  const [webMenuBgColor, setWebMenuBgColor] = useState("#ffffff");
+  const [webMenuTextColor, setWebMenuTextColor] = useState("#000000");
+  const [webMenuFontSize, setWebMenuFontSize] = useState(16);
+  const [webMenuHoverColor, setWebMenuHoverColor] = useState("#cccccc");
+  const [webMenuHoverTextColor, setWebMenuHoverTextColor] = useState("#cccccc");
+    const [bgColor, setBgColor] = useState("#ffffff");
+  const [textColor, setTextColor] = useState("#000000");
+  const [fontSize, setFontSize] = useState(16);
 
-  const subcategorySelectControl = colorControls?.find(
-    (colorControl) => colorControl.section === "home-subcategory-select"
-  );
+  const [sliders, setSliders] = useState({
+    all: [],
+    cricket: [],
+    soccer: [],
+    tennis: [],
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [failedImages, setFailedImages] = useState(new Set()); // Track failed images to avoid duplicate logs
 
+  const { data: homeControls } = useGetHomeControlsQuery();
+
+  // Log VITE_API_URL for debugging
+  console.log("API Base URL:", import.meta.env.VITE_API_URL);
+
+
+  
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/count`)
+      .then((res) => {
+        const data = res.data;
+        setBgColor(data.bgColor || "#ffffff");
+        setTextColor(data.textColor || "#000000");
+        setFontSize(data.fontSize || 16);
+      })
+      .catch((err) => {
+        console.error("Fetch error:", err);
+        toast.error("Failed to fetch count settings!");
+      });
+  }, []);
+
+  // Fetch subcategory UI colors
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/subcategory`)
+      .then((res) => {
+        const data = res.data;
+        setWebMenuBgColor(data.webMenuBgColor || "#ffffff");
+        setWebMenuTextColor(data.webMenuTextColor || "#000000");
+        setWebMenuFontSize(data.webMenuFontSize || 16);
+        setWebMenuHoverColor(data.webMenuHoverColor || "#cccccc");
+        setWebMenuHoverTextColor(data.webMenuHoverTextColor || "#cccccc");
+      })
+      .catch((err) => {
+        console.error("Error fetching subcategory settings:", err);
+        toast.error("Failed to fetch subcategory settings!");
+      });
+  }, []);
+
+  // Fetch different category banners
+  const fetchAllSliders = async () => {
+    try {
+      const url = `${import.meta.env.VITE_API_URL}/api/banners`;
+      console.log("Fetching banners from:", url);
+      const res = await axios.get(url);
+      setSliders((prev) => ({ ...prev, all: res.data }));
+      console.log("Fetched banners:", res.data);
+    } catch (err) {
+      const errorMessage = err.response
+        ? `Failed to fetch banners: ${err.response.status} ${err.response.statusText}`
+        : `Failed to fetch banners: ${err.message}`;
+      console.error(errorMessage, err);
+      setError(errorMessage);
+      toast.error(errorMessage);
+    }
+  };
+
+  const fetchCricketSliders = async () => {
+    try {
+      const url = `${import.meta.env.VITE_API_URL}/api/cricket-banners`;
+      console.log("Fetching cricket banners from:", url);
+      const res = await axios.get(url);
+      setSliders((prev) => ({ ...prev, cricket: res.data }));
+      console.log("Fetched cricket banners:", res.data);
+    } catch (err) {
+      const errorMessage = err.response
+        ? `Failed to fetch cricket banners: ${err.response.status} ${err.response.statusText}`
+        : `Failed to fetch cricket banners: ${err.message}`;
+      console.error(errorMessage, err);
+      setError(errorMessage);
+      toast.error(errorMessage);
+    }
+  };
+
+  const fetchSoccerSliders = async () => {
+    try {
+      const url = `${import.meta.env.VITE_API_URL}/api/soccer-banners`;
+      console.log("Fetching soccer banners from:", url);
+      const res = await axios.get(url);
+      setSliders((prev) => ({ ...prev, soccer: res.data }));
+      console.log("Fetched soccer banners:", res.data);
+    } catch (err) {
+      const errorMessage = err.response
+        ? `Failed to fetch soccer banners: ${err.response.status} ${err.response.statusText}`
+        : `Failed to fetch soccer banners: ${err.message}`;
+      console.error(errorMessage, err);
+      setError(errorMessage);
+      toast.error(errorMessage);
+    }
+  };
+
+  const fetchTennisSliders = async () => {
+    try {
+      const url = `${import.meta.env.VITE_API_URL}/api/tennis-banners`;
+      console.log("Fetching tennis banners from:", url);
+      const res = await axios.get(url);
+      setSliders((prev) => ({ ...prev, tennis: res.data }));
+      console.log("Fetched tennis banners:", res.data);
+    } catch (err) {
+      const errorMessage = err.response
+        ? `Failed to fetch tennis banners: ${err.response.status} ${err.response.statusText}`
+        : `Failed to fetch tennis banners: ${err.message}`;
+      console.error(errorMessage, err);
+      setError(errorMessage);
+      toast.error(errorMessage);
+    }
+  };
+
+  // Fetch all banners on component mount
+  useEffect(() => {
+    const fetchAllData = async () => {
+      setIsLoading(true);
+      try {
+        await Promise.all([
+          fetchAllSliders(),
+          fetchCricketSliders(),
+          fetchSoccerSliders(),
+          fetchTennisSliders(),
+        ]);
+      } catch (err) {
+        console.error("Error fetching all banners:", err);
+        setError("Failed to fetch banners");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchAllData();
+  }, []); // Empty dependency array to run once on mount
+
+  // Find active home controls
   const allControl = homeControls?.find(
     (control) => control.category === "banner-all" && control.isSelected
   );
@@ -29,13 +172,16 @@ const SportsCategory = () => {
     (control) => control.category === "banner-tennis" && control.isSelected
   );
 
-  const bannerTitleControl = colorControls?.find(
-    (control) => control.section === "home-banner-title"
-  );
-  const bannerCountControl = colorControls?.find(
-    (control) => control.section === "home-banner-count"
-  );
+  // Helper to safely get full image URL
+  const getImageUrl = (img) => {
+    if (!img) return "/placeholder.png";
+    if (img.startsWith("http")) return img;
+    // Remove leading /uploads/ if present to avoid duplication
+    const cleanImg = img.startsWith("/uploads/") ? img.replace("/uploads/", "") : img;
+    return `${import.meta.env.VITE_API_URL}/uploads/${cleanImg}`;
+  };
 
+  // Subcategories
   const subcategories = [
     { icon: BsStopwatchFill, title: "In-Play", value: "in-play", route: "" },
     { icon: FaCalendarDay, title: "Today", value: "today", route: "" },
@@ -54,76 +200,85 @@ const SportsCategory = () => {
 
   const banners = [
     {
-      image: allControl?.image,
+      image: allControl?.image || sliders.all[0]?.imageUrl,
       title: "All",
       value: "all",
       count: counts[selectedCategory].all,
     },
     {
-      image: cricketControl?.image,
+      image: cricketControl?.image || sliders.cricket[0]?.imageUrl,
       title: "Cricket",
       value: "cricket",
       count: counts[selectedCategory].cricket,
     },
     {
-      image: soccerControl?.image,
+      image: soccerControl?.image || sliders.soccer[0]?.imageUrl,
       title: "Soccer",
       value: "soccer",
       count: counts[selectedCategory].soccer,
     },
     {
-      image: tennisControl?.image,
+      image: tennisControl?.image || sliders.tennis[0]?.imageUrl,
       title: "Tennis",
       value: "tennis",
       count: counts[selectedCategory].tennis,
     },
   ];
 
+  // Log banners for debugging
+  console.log(
+    "Banners array:",
+    banners.map((b) => ({ title: b.title, image: b.image, resolvedUrl: getImageUrl(b.image) }))
+  );
+
+  if (isLoading) {
+    return <div className="text-center p-4">Loading banners...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center p-4 text-red-500">{error}</div>;
+  }
+
   return (
     <div className="flex gap-1 sm:gap-2 px-1 sm:px-3">
-      {/* Subcategories Sidebar */}
+      {/* Sidebar */}
       <div
         style={{
-          backgroundColor: subcategorySelectControl?.backgroundColor,
-          color: subcategorySelectControl?.textColor,
-          fontSize: subcategorySelectControl?.fontSize
-            ? subcategorySelectControl?.fontSize
-            : "12px",
+          backgroundColor: webMenuBgColor,
+          color: webMenuTextColor,
+          fontSize: webMenuFontSize ? `${webMenuFontSize}px` : "12px",
         }}
         className="w-[20%] rounded-lg sm:p-2 h-fit"
       >
         {subcategories.map(({ icon: Icon, title, value, route }) => (
-          <div
-            key={title}
-            className={`group relative mb-1 last:mb-0 rounded-lg transition-all duration-200 `}
-          >
+          <div key={title} className="group relative mb-1 last:mb-0 rounded-lg">
             {route ? (
               <Link to={route}>
                 <div
-                  className={`flex flex-col gap-2 p-2 sm:p-3 justify-center items-center rounded-lg transition-all duration-200 `}
+                  className="flex flex-col gap-2 p-2 sm:p-3 justify-center items-center rounded-lg transition-all duration-200"
                   style={{
                     backgroundColor:
                       value === isHoveredValue
-                        ? subcategorySelectControl?.hoverBackgroundColor
+                        ? webMenuHoverColor
                         : value === selectedCategory
-                        ? subcategorySelectControl?.hoverBackgroundColor
+                        ? webMenuHoverColor
                         : "transparent",
                     color:
                       value === selectedCategory || value === isHoveredValue
-                        ? subcategorySelectControl?.hoverTextColor
-                        : subcategorySelectControl?.textColor,
+                        ? webMenuHoverTextColor
+                        : webMenuTextColor,
                   }}
                   onMouseEnter={() => setIsHoveredValue(value)}
                   onMouseLeave={() => setIsHoveredValue("")}
                   onClick={() => setSelectedCategory(value)}
                 >
                   <Icon
-                    className="text-3xl transition-colors duration-200"
+                    className="text-3xl"
                     style={{
                       color:
                         value === selectedCategory
-                          ? subcategorySelectControl?.hoverTextColor
-                          : subcategorySelectControl?.textColor,
+                          ? webMenuHoverTextColor
+                          : webMenuTextColor,
                     }}
                   />
                   <p className="text-xs sm:text-sm">{title}</p>
@@ -131,30 +286,30 @@ const SportsCategory = () => {
               </Link>
             ) : (
               <div
-                className={`flex flex-col gap-2 p-2 sm:p-3 justify-center items-center rounded-lg cursor-pointer transition-all duration-200 `}
+                className="flex flex-col gap-2 p-2 sm:p-3 justify-center items-center rounded-lg cursor-pointer transition-all duration-200"
                 style={{
                   backgroundColor:
                     value === isHoveredValue
-                      ? subcategorySelectControl?.hoverBackgroundColor
+                      ? webMenuHoverColor
                       : value === selectedCategory
-                      ? subcategorySelectControl?.hoverBackgroundColor
+                      ? webMenuHoverColor
                       : "transparent",
                   color:
                     value === selectedCategory || value === isHoveredValue
-                      ? subcategorySelectControl?.hoverTextColor
-                      : subcategorySelectControl?.textColor,
+                      ? webMenuHoverTextColor
+                      : webMenuTextColor,
                 }}
                 onMouseEnter={() => setIsHoveredValue(value)}
                 onMouseLeave={() => setIsHoveredValue("")}
                 onClick={() => setSelectedCategory(value)}
               >
                 <Icon
-                  className="text-3xl transition-colors duration-200"
+                  className="text-3xl"
                   style={{
                     color:
                       value === selectedCategory
-                        ? subcategorySelectControl?.hoverTextColor
-                        : subcategorySelectControl?.textColor,
+                        ? webMenuHoverTextColor
+                        : webMenuTextColor,
                   }}
                 />
                 <p className="text-xs sm:text-sm">{title}</p>
@@ -167,31 +322,37 @@ const SportsCategory = () => {
       {/* Sports Banners */}
       <div className="w-[80%] flex flex-col gap-3">
         {banners?.map((banner) => (
-          <div
-            key={banner.value}
-            className="relative rounded-lg overflow-hidden"
-          >
+          <div key={banner.value} className="relative rounded-lg overflow-hidden">
             <img
               className="rounded-lg h-[120px] w-full object-cover"
-              src={`${import.meta.env.VITE_BASE_API_URL}${banner.image}`}
+              src={getImageUrl(banner.image)}
               alt={banner.title}
+              loading="lazy"
+              onError={(e) => {
+                const url = getImageUrl(banner.image);
+                if (!failedImages.has(url)) {
+                  setFailedImages((prev) => new Set(prev).add(url));
+                  console.log(`Failed to load image for ${banner.title}: ${url}`);
+                }
+                e.target.src = "/placeholder.png";
+              }}
             />
             <div className="absolute top-5 left-7">
               <h2
                 style={{
-                  color: bannerTitleControl?.textColor,
-                  fontSize: bannerTitleControl?.fontSize,
+                  color: textColor,
+                  fontSize: fontSize ? `${fontSize}px` : "20px",
                 }}
-                className="text-xl font-bold text-[#5A5E62]"
+                className="text-xl font-bold"
               >
                 {banner.title}
               </h2>
               <h2
                 style={{
-                  color: bannerCountControl?.textColor,
-                  fontSize: bannerCountControl?.fontSize,
+                  color: textColor,
+                  fontSize: fontSize ? `${fontSize * 2}px` : "48px",
                 }}
-                className="text-5xl font-bold text-[#0A0A0A]"
+                className="text-5xl font-bold"
               >
                 {banner.count}
               </h2>
