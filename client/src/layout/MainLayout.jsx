@@ -67,9 +67,15 @@ const MainLayout = () => {
 
   // ফেচ ডেটা এবং চেক ইউজার স্ট্যাটাস
   useEffect(() => {
-    dispatch(checkUserStatus());
     fetchSettings();
     fetchLogo();
+  }, [ ]);
+
+
+  // ফেচ ডেটা এবং চেক ইউজার স্ট্যাটাস
+  useEffect(() => {
+    dispatch(checkUserStatus());
+    
   }, [dispatch]);
 
   return (

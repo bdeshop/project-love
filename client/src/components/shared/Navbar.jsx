@@ -20,16 +20,25 @@ const Navbar = () => {
   const [fontSize, setFontSize] = useState(16);
 
   // ✅ AuthContext থেকে ইউজার নেওয়া
-  const { user, reload, loading,balance,logo } = useContext(AuthContext);
+  const { user, reload, loading, balance, logo } = useContext(AuthContext);
 
   const baseUrl = import.meta.env.VITE_API_URL;
-  const logoUrl = logo ? `${baseUrl}${logo.startsWith("/") ? "" : "/"}${logo}` : null;
+  
+  const logoUrl = logo ? `${baseUrl}${logo}` : null;
+
+  useEffect(() => {
+    console.log(baseUrl)
+    console.log(logo)
+    console.log(logoUrl);
+  }, [logoUrl]);
 
   // Helper to safely get full image URL
   const getImageUrl = (img) => {
     if (!img) return "/logo.png"; // লোগো এবং ফেভিকনের জন্য ডিফল্ট
     if (img.startsWith("http")) return img;
-    const cleanImg = img.startsWith("/uploads/") ? img.replace("/uploads/", "") : img;
+    const cleanImg = img.startsWith("/uploads/")
+      ? img.replace("/uploads/", "")
+      : img;
     return `${import.meta.env.VITE_API_URL}/uploads/${cleanImg}`;
   };
 
@@ -63,7 +72,6 @@ const Navbar = () => {
           <Sidebar
             isSidebarOpen={isSidebarOpen}
             toggleSidebar={toggleSidebar}
-      
           />
         )}
 
@@ -71,9 +79,7 @@ const Navbar = () => {
           style={{
             backgroundColor: bgColor,
             color: textColor,
-            fontSize: fontSize
-              ? fontSize
-              : "14px",
+            fontSize: fontSize ? fontSize : "14px",
           }}
           className="flex items-center justify-between px-3 py-2 "
         >
@@ -86,11 +92,7 @@ const Navbar = () => {
               />
             )}
             <Link to="/">
-              <img
-                className="w-[84px] h-[26px]"
-                src={logoUrl}
-                alt="Logo"
-              />
+              <img className="w-[84px] h-[26px]" src={logoUrl} alt="Logo" />
             </Link>
           </div>
 
@@ -114,9 +116,7 @@ const Navbar = () => {
           ) : (
             <div className="flex items-center justify-center gap-3">
               <Link
-                target="_blank"
-                rel="noreferrer noopenner"
-                to="https://agentlist.oracletechnology.net"
+                to="/signup"
               >
                 <PrimaryButton icon={FiPlusCircle} background={""}>
                   SignUp

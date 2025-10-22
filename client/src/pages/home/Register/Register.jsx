@@ -1,7 +1,6 @@
 import { Input } from "@/components/ui/input";
 import {
   FaChevronLeft,
-  FaTimes,
   FaEye,
   FaEyeSlash,
   FaUser,
@@ -15,19 +14,20 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import flag from "@/assets/bangladesh.png";
-import { useAddUserMutation } from "@/redux/features/allApis/usersApi/usersApi";
 import { useToasts } from "react-toast-notifications";
 import SpinLoader from "@/components/loaders/SpinLoader";
+import { HiUserGroup } from "react-icons/hi2";
+import axios from "axios";
 
 const Register = () => {
-  const [addUser] = useAddUserMutation();
   const navigate = useNavigate();
+  const { addToast } = useToasts();
+
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-    setValue,
   } = useForm({
     defaultValues: {
       username: "",
@@ -37,99 +37,117 @@ const Register = () => {
       email: "",
       password: "",
       confirmPassword: "",
+      reffer: "",
       validationCode: "",
     },
   });
+
   const [loading, setLoading] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { addToast } = useToasts();
 
-  // Function to generate a random 4-digit verification code
+  // ✅ ভেরিফিকেশন কোড তৈরি
   const generateVerificationCode = () => {
     const code = Math.floor(1000 + Math.random() * 9000).toString();
     setVerificationCode(code);
   };
 
-  // Generate code when the component mounts
   useEffect(() => {
     generateVerificationCode();
   }, []);
 
-  // Handle form submission
+  // ✅ ফর্ম সাবমিট হ্যান্ডলার
   const onSubmit = async (data) => {
-    // eslint-disable-next-line no-unused-vars
     const { confirmPassword, validationCode, ...userInfo } = data;
-    if (data.validationCode === verificationCode) {
-      try {
-        setLoading(true);
-        const { data, error } = await addUser(userInfo);
-        if (data.insertedId) {
-          addToast("Registration successful", {
-            appearance: "success",
-            autoDismiss: true,
-          });
-          setLoading(false);
-          navigate("/");
-        }
-        if (error) {
-          console.log(error);
-        }
-      } catch (error) {
-        console.log(error.message);
-        addToast(error.message, {
-          appearance: "error",
-          autoDismiss: true,
-        });
-        setLoading(false);
-      }
-    } else {
-      addToast("Verification code does not match.", {
+
+    if (data.validationCode !== verificationCode) {
+      addToast("ভেরিফিকেশন কোড মেলেনি।", {
         appearance: "error",
         autoDismiss: true,
       });
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/admins/user`,
+        { ...userInfo, loginStatus: "self-login" }
+      );
+
+      if (res.data?.success) {
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            _id: res.data.insertedId,
+            username: userInfo.username,
+            role: userInfo.role || "US",
+            loginStatus: "self-login",
+          })
+        );
+
+        addToast("রেজিস্ট্রেশন সফল হয়েছে!", {
+          appearance: "success",
+          autoDismiss: true,
+        });
+
+        navigate("/");
+      } else {
+        addToast(res.data?.message || "রেজিস্ট্রেশন ব্যর্থ হয়েছে।", {
+          appearance: "error",
+          autoDismiss: true,
+        });
+      }
+    } catch (error) {
+      console.error("Registration Error:", error);
+      addToast(error.response?.data?.message || "রেজিস্ট্রেশন ব্যর্থ হয়েছে।", {
+        appearance: "error",
+        autoDismiss: true,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Function to go back to the previous route
-  const handleGoBack = () => {
-    navigate(-1);
-  };
+  const handleGoBack = () => navigate(-1);
 
   return (
-    <div className="bg-white h-screen">
+    <div className="bg-white">
+      {/* Header */}
       <div className="relative bg-slate-600 px-3 py-3 text-white text-center">
         <FaChevronLeft
           className="absolute left-0 top-1/2 transform -translate-y-1/2 ml-2 cursor-pointer"
           onClick={handleGoBack}
         />
-        <p>Sign Up</p>
+        <p>সাইন আপ</p>
       </div>
+
+      {/* Banner */}
       <img
-        className="h-1/6 w-full"
+        className="w-full h-40"
         src="https://www.wickspin24.live/images/velki-bg-login.webp"
-        alt=""
+        alt="Signup Banner"
       />
+
+      {/* Form */}
       <div className="w-full p-2 sm:p-6 text-[#6F8898]">
         <form onSubmit={handleSubmit(onSubmit)}>
           <h2 className="uppercase text-3xl font-medium text-center text-black mb-4">
-            Sign Up
+            সাইন আপ
           </h2>
 
-          {/* Username Input */}
+          {/* ইউজারনেম */}
           <div className="relative mb-4">
             <FaUser className="absolute left-2 text-2xl top-1/2 transform -translate-y-1/2" />
             <Input
               type="text"
-              placeholder="Username"
-              className="pl-12 pr-10 border border-black h-10 sm:h-12 rounded-lg focus:outline-none bg-transparent w-full placeholder:text-lg"
+              placeholder="ইউজারনেম"
+              className="pl-12 pr-10 border border-black h-10 sm:h-12 rounded-lg bg-transparent"
               {...register("username", {
-                required: "Username is required.",
-                minLength: {
-                  value: 4,
-                  message: "Username must be at least 4 characters long.",
-                },
+                required: "ইউজারনেম আবশ্যক।",
+                minLength: { value: 4, message: "কমপক্ষে ৪ অক্ষর।" },
               })}
             />
             {errors.username && (
@@ -139,19 +157,16 @@ const Register = () => {
             )}
           </div>
 
-          {/* Password Input */}
+          {/* পাসওয়ার্ড */}
           <div className="relative mb-4">
             <IoIosUnlock className="absolute left-2 text-3xl top-1/2 transform -translate-y-1/2" />
             <Input
               type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              className="pl-12 pr-10 border border-black h-10 sm:h-12 rounded-lg focus:outline-none bg-transparent w-full placeholder:text-lg"
+              placeholder="পাসওয়ার্ড"
+              className="pl-12 pr-10 border border-black h-10 sm:h-12 rounded-lg bg-transparent"
               {...register("password", {
-                required: "Password is required.",
-                minLength: {
-                  value: 6,
-                  message: "Password must be at least 6 characters long.",
-                },
+                required: "পাসওয়ার্ড আবশ্যক।",
+                minLength: { value: 6, message: "কমপক্ষে ৬ অক্ষর।" },
               })}
             />
             <div
@@ -167,17 +182,17 @@ const Register = () => {
             )}
           </div>
 
-          {/* Confirm Password Input */}
+          {/* কনফার্ম পাসওয়ার্ড */}
           <div className="relative mb-4">
             <IoIosUnlock className="absolute left-2 text-3xl top-1/2 transform -translate-y-1/2" />
             <Input
               type={showConfirmPassword ? "text" : "password"}
-              placeholder="Confirm Password"
-              className="pl-12 pr-10 border border-black h-10 sm:h-12 rounded-lg focus:outline-none bg-transparent w-full placeholder:text-lg"
+              placeholder="পাসওয়ার্ড নিশ্চিত করুন"
+              className="pl-12 pr-10 border border-black h-10 sm:h-12 rounded-lg bg-transparent"
               {...register("confirmPassword", {
-                required: "Please confirm your password.",
+                required: "পাসওয়ার্ড নিশ্চিত করুন।",
                 validate: (value) =>
-                  value === watch("password") || "Passwords do not match.",
+                  value === watch("password") || "পাসওয়ার্ড মেলেনি।",
               })}
             />
             <div
@@ -193,16 +208,14 @@ const Register = () => {
             )}
           </div>
 
-          {/* First Name Input */}
+          {/* ফার্স্ট নেম */}
           <div className="relative mb-4">
             <FaUser className="absolute left-2 text-2xl top-1/2 transform -translate-y-1/2" />
             <Input
               type="text"
-              placeholder="First Name"
-              className="pl-12 pr-10 border border-black h-10 sm:h-12 rounded-lg focus:outline-none bg-transparent w-full placeholder:text-lg"
-              {...register("firstName", {
-                required: "First name is required.",
-              })}
+              placeholder="প্রথম নাম"
+              className="pl-12 pr-10 border border-black h-10 sm:h-12 rounded-lg bg-transparent"
+              {...register("firstName", { required: "প্রথম নাম আবশ্যক।" })}
             />
             {errors.firstName && (
               <p className="text-red-500 text-sm mt-1">
@@ -211,16 +224,14 @@ const Register = () => {
             )}
           </div>
 
-          {/* Last Name Input */}
+          {/* লাস্ট নেম */}
           <div className="relative mb-4">
             <FaUser className="absolute left-2 text-2xl top-1/2 transform -translate-y-1/2" />
             <Input
               type="text"
-              placeholder="Last Name"
-              className="pl-12 pr-10 border border-black h-10 sm:h-12 rounded-lg focus:outline-none bg-transparent w-full placeholder:text-lg"
-              {...register("lastName", {
-                required: "Last name is required.",
-              })}
+              placeholder="শেষ নাম"
+              className="pl-12 pr-10 border border-black h-10 sm:h-12 rounded-lg bg-transparent"
+              {...register("lastName", { required: "শেষ নাম আবশ্যক।" })}
             />
             {errors.lastName && (
               <p className="text-red-500 text-sm mt-1">
@@ -229,18 +240,17 @@ const Register = () => {
             )}
           </div>
 
-          {/* Phone Input */}
+          {/* ফোন */}
           <div className="relative mb-4">
-            <div className="absolute left-2 flex items-center">
+            <div className="absolute left-2 top-3 flex items-center">
               <img src={flag} alt="Bangladesh" className="w-6 h-6 mr-2" />
-              <span className="text-md">+880</span>
             </div>
             <Input
               type="text"
-              placeholder="Phone Number"
-              className="pl-16 pr-10 border border-black h-10 sm:h-12 rounded-lg focus:outline-none bg-transparent w-full placeholder:text-lg"
+              placeholder="ফোন নম্বর"
+              className="pl-12 pr-10 border border-black h-10 sm:h-12 rounded-lg bg-transparent"
               {...register("phone", {
-                required: "Phone number is required.",
+                required: "ফোন নম্বর আবশ্যক।",
               })}
             />
             {errors.phone && (
@@ -250,19 +260,16 @@ const Register = () => {
             )}
           </div>
 
-          {/* Email Input */}
+          {/* ইমেইল */}
           <div className="relative mb-4">
             <MdEmail className="absolute left-2 text-2xl top-1/2 transform -translate-y-1/2" />
             <Input
               type="email"
-              placeholder="Email"
-              className="pl-12 pr-10 border border-black h-10 sm:h-12 rounded-lg focus:outline-none bg-transparent w-full placeholder:text-lg"
+              placeholder="ইমেইল"
+              className="pl-12 pr-10 border border-black h-10 sm:h-12 rounded-lg bg-transparent"
               {...register("email", {
-                required: "Email is required.",
-                pattern: {
-                  value: /^[\w-.]+@[\w-]+\.[a-z]{2,}$/i,
-                  message: "Invalid email address.",
-                },
+                required: "ইমেইল আবশ্যক।",
+               
               })}
             />
             {errors.email && (
@@ -272,23 +279,34 @@ const Register = () => {
             )}
           </div>
 
-          {/* Validation Code Input */}
+          {/* রেফার */}
+          <div className="relative mb-4">
+            <HiUserGroup className="absolute left-2 text-2xl top-1/2 transform -translate-y-1/2" />
+            <Input
+              type="text"
+              placeholder="রেফার কোড (ঐচ্ছিক)"
+              className="pl-12 pr-10 border border-black h-10 sm:h-12 rounded-lg bg-transparent"
+              {...register("reffer")}
+            />
+          </div>
+
+          {/* ভেরিফিকেশন */}
           <div className="relative mb-4">
             <FaShield className="absolute left-2 text-2xl top-1/2 transform -translate-y-1/2" />
             <Input
               type="text"
-              placeholder="Validation Code"
-              className="pl-12 pr-10 border border-black h-10 sm:h-12 rounded-lg focus:outline-none bg-transparent w-full placeholder:text-lg"
+              placeholder="ভেরিফিকেশন কোড"
+              className="pl-12 pr-10 border border-black h-10 sm:h-12 rounded-lg bg-transparent"
               {...register("validationCode", {
-                required: "Validation code is required.",
+                required: "ভেরিফিকেশন কোড আবশ্যক।",
               })}
             />
-            <div className="absolute right-2 flex items-center">
+            <div className="absolute right-2 top-1 flex items-center">
               <span className="text-black text-3xl font-bold">
                 {verificationCode}
               </span>
               <FaRedo
-                className="ml-2 cursor-pointer text-black"
+                className="ml-1 cursor-pointer text-black"
                 onClick={generateVerificationCode}
               />
             </div>
@@ -299,29 +317,32 @@ const Register = () => {
             )}
           </div>
 
-          {/* Remember Me Checkbox */}
+          {/* টার্মস */}
           <div className="flex items-center gap-2 mb-4">
             <input
               type="checkbox"
-              className="border-gray-300 rounded focus:ring-0"
+              {...register("terms", {
+                required: "আপনাকে টার্মস এবং কন্ডিশন মেনে নিতে হবে।",
+              })}
             />
-            <label htmlFor="rememberMe">
-              I agree and understand the
+            <label htmlFor="terms">
+              আমি সম্মত এবং বুঝতে পেরেছি{" "}
               <Link
-                to="/terms              and-conditions"
+                to="/terms-and-conditions"
                 className="text-blue-500 underline"
               >
-                Terms & Conditions
+                টার্মস এবং কন্ডিশন
               </Link>
             </label>
           </div>
 
-          {/* Submit Button */}
+          {/* সাবমিট বাটন */}
           <Button
             type="submit"
             className="w-full bg-black text-white h-10 sm:h-12 rounded-lg"
+            disabled={loading}
           >
-            {loading ? <SpinLoader /> : "Sign Up"}
+            {loading ? <SpinLoader /> : "সাইন আপ"}
           </Button>
         </form>
       </div>

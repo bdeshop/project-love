@@ -29,6 +29,7 @@ export const AuthProvider = ({ children }) => {
         `${import.meta.env.VITE_API_URL}/api/logo`
       );
       setLogo(response.data ? response.data.path : null);
+      console.log(response.data ? response.data.path : null);
     } catch (error) {
       console.error("Error fetching logo:", error);
     }
