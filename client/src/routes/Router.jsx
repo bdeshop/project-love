@@ -46,6 +46,8 @@ import { NotFound } from "@/pages/NotFound";
 import GameApi from "@/components/GameApi/GameApi";
 import LoginForm from "@/pages/LoginForm";
 import PrivateRoute from "./PrivateRoute";
+import Deposit from "@/pages/Deposit/Deposit";
+import Withdraw from "@/pages/Withdraw/WIthdraw";
 
 const router = createBrowserRouter([
   {
@@ -96,6 +98,14 @@ const router = createBrowserRouter([
       {
         path: "/setting",
         element: <PrivateRoute> <Settings /> </PrivateRoute>,
+      },
+      {
+        path: "/deposit",
+        element: <PrivateRoute> <Deposit /> </PrivateRoute>,
+      },
+      {
+        path: "/withdraw",
+        element: <PrivateRoute> <Withdraw /> </PrivateRoute>,
       },
       { path: "/login", element: <Login /> },
       { path: "/signup", element: <Register /> },

@@ -4,6 +4,7 @@ import { FiBarChart } from "react-icons/fi";
 import { CiViewList } from "react-icons/ci";
 import { GoHistory } from "react-icons/go";
 import { ImProfile } from "react-icons/im";
+import { PiHandDepositFill, PiHandWithdrawFill } from "react-icons/pi";
 
 const menuItems = [
   {
@@ -26,14 +27,27 @@ const menuItems = [
     link: "/account-statement",
   },
   { id: 4, label: "Bets History", Icon: GoHistory, link: "/bets-history" },
+  
   {
     id: 5,
+    label: "Deposit",
+    Icon: PiHandDepositFill,
+    link: "/deposit",
+  },
+  {
+    id: 6,
     label: "Profit & Loss",
     Icon: FaHandHoldingDollar,
     link: "/profit-loss",
   },
-  { id: 6, label: "Activity Log", Icon: FiBarChart, link: "/activity-log" },
-  { id: 7, label: "My Profile", Icon: ImProfile, link: "/my-profile" },
+  {
+    id: 7,
+    label: "Withdraw",
+    Icon: PiHandWithdrawFill ,
+    link: "/withdraw",
+  },
+  { id: 8, label: "Activity Log", Icon: FiBarChart, link: "/activity-log" },
+  { id: 9, label: "My Profile", Icon: ImProfile, link: "/my-profile" },
 ];
 
 export default menuItems;

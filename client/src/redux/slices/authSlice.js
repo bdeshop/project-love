@@ -20,7 +20,6 @@ const authSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
         localStorage.removeItem("token");
-        localStorage.removeItem("user");
         return;
       }
 
@@ -35,7 +34,6 @@ const authSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
       localStorage.removeItem("token");
-      localStorage.removeItem("user");
     },
     setSingleUser: (state, { payload }) => {
       state.singleUser = payload;
@@ -50,7 +48,7 @@ const authSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
         localStorage.removeItem("token");
-        localStorage.removeItem("user");
+    
       }
     },
     // Add a new reducer to check user status on app load or periodically
@@ -66,7 +64,7 @@ const authSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
         localStorage.removeItem("token");
-        localStorage.removeItem("user");
+  
       }
     },
   },
