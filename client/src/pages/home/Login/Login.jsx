@@ -30,6 +30,7 @@ const Login = () => {
   const baseUrl = import.meta.env.VITE_API_URL;
   const logoUrl = logo ? `${baseUrl}${logo.startsWith("/") ? "" : "/"}${logo}` : null;
 
+
   // Redirect if already logged in
   useEffect(() => {
     if (user && !toastShownRef.current) {
@@ -153,10 +154,10 @@ const Login = () => {
           src={getImageUrl(loginImage)}
           alt="Login Banner"
           className="w-full max-w-md h-40 object-cover rounded-lg"
-          onError={(e) => {
-            e.target.src = "/placeholder.png";
-            console.log(`Failed to load login image: ${getImageUrl(loginImage)}`);
-          }}
+          // onError={(e) => {
+          //   e.target.src = "/placeholder.png";
+          //   console.log(`Failed to load login image: ${getImageUrl(loginImage)}`);
+          // }}
         />
       </div>
 

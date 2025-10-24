@@ -102,7 +102,7 @@ const Navbar = () => {
               <div className="flex flex-col items-start">
                 <p>@{user?.username}</p>
                 <div className="flex flex-row items-center gap-1 text-sm">
-                  <p>USD {balance || "0.00"}</p>
+                  <p>PBU {balance || "0.00"}</p>
                   <p className="text-red-500">
                     <span className="font-semibold text-black">Exp</span> (0.00)
                   </p>

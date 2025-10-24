@@ -14,7 +14,7 @@ const SportsCategory = () => {
   const [webMenuFontSize, setWebMenuFontSize] = useState(16);
   const [webMenuHoverColor, setWebMenuHoverColor] = useState("#cccccc");
   const [webMenuHoverTextColor, setWebMenuHoverTextColor] = useState("#cccccc");
-    const [bgColor, setBgColor] = useState("#ffffff");
+  const [bgColor, setBgColor] = useState("#ffffff");
   const [textColor, setTextColor] = useState("#000000");
   const [fontSize, setFontSize] = useState(16);
 
@@ -33,8 +33,6 @@ const SportsCategory = () => {
   // Log VITE_API_URL for debugging
   console.log("API Base URL:", import.meta.env.VITE_API_URL);
 
-
-  
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_API_URL}/api/count`)
@@ -85,6 +83,10 @@ const SportsCategory = () => {
       toast.error(errorMessage);
     }
   };
+
+  // 1761285340319-2025-08-21T20-46-44.529Z_velki-wall.png
+  // 1761285298675-2025-08-21T20-46-37.341Z_velki-wall.png
+  // 1761285298675-2025-08-21T20-46-37.341Z_velki-wall.png
 
   const fetchCricketSliders = async () => {
     try {
@@ -174,10 +176,20 @@ const SportsCategory = () => {
 
   // Helper to safely get full image URL
   const getImageUrl = (img) => {
-    if (!img) return "/placeholder.png";
+    console.log("this is call log -> ", img);
+
+    if (!img) return "/";
     if (img.startsWith("http")) return img;
     // Remove leading /uploads/ if present to avoid duplication
-    const cleanImg = img.startsWith("/uploads/") ? img.replace("/uploads/", "") : img;
+    const cleanImg = img.startsWith("/uploads/")
+      ? img.replace("/uploads/", "")
+      : img;
+
+    console.log(
+      "this is banner image side log -> ",
+      `${import.meta.env.VITE_API_URL}/uploads/${cleanImg}`
+    );
+
     return `${import.meta.env.VITE_API_URL}/uploads/${cleanImg}`;
   };
 
@@ -200,35 +212,49 @@ const SportsCategory = () => {
 
   const banners = [
     {
-      image: allControl?.image || sliders.all[0]?.imageUrl,
+      image: sliders.all[0]?.imageUrl,
       title: "All",
       value: "all",
       count: counts[selectedCategory].all,
     },
     {
-      image: cricketControl?.image || sliders.cricket[0]?.imageUrl,
+      image: sliders.cricket[0]?.imageUrl,
       title: "Cricket",
       value: "cricket",
       count: counts[selectedCategory].cricket,
     },
     {
-      image: soccerControl?.image || sliders.soccer[0]?.imageUrl,
+      image: sliders.soccer[0]?.imageUrl,
       title: "Soccer",
       value: "soccer",
       count: counts[selectedCategory].soccer,
     },
     {
-      image: tennisControl?.image || sliders.tennis[0]?.imageUrl,
+      image: sliders.tennis[0]?.imageUrl,
       title: "Tennis",
       value: "tennis",
       count: counts[selectedCategory].tennis,
     },
   ];
 
+  useEffect(() => {
+    console.log("this is banner useeffect banner -> ", banners);
+    console.log(
+      "this is banner useeffect soccer -> ",
+      sliders.soccer[0]?.imageUrl
+    );
+    console.log("this is banner useeffect soccerControl -> ", soccerControl);
+    console.log("this is banner useeffect slider -> ", sliders);
+  }, [banners, sliders, soccerControl]);
+
   // Log banners for debugging
   console.log(
     "Banners array:",
-    banners.map((b) => ({ title: b.title, image: b.image, resolvedUrl: getImageUrl(b.image) }))
+    banners.map((b) => ({
+      title: b.title,
+      image: b.image,
+      resolvedUrl: getImageUrl(b.image),
+    }))
   );
 
   if (isLoading) {
@@ -322,20 +348,31 @@ const SportsCategory = () => {
       {/* Sports Banners */}
       <div className="w-[80%] flex flex-col gap-3">
         {banners?.map((banner) => (
-          <div key={banner.value} className="relative rounded-lg overflow-hidden">
+          <div
+            key={banner.value}
+            className="relative rounded-lg overflow-hidden"
+          >
+            {console.log(
+              "this is banner value ",
+              banner.value,
+              getImageUrl(banner.image)
+            )}
+
             <img
               className="rounded-lg h-[120px] w-full object-cover"
               src={getImageUrl(banner.image)}
               alt={banner.title}
               loading="lazy"
-              onError={(e) => {
-                const url = getImageUrl(banner.image);
-                if (!failedImages.has(url)) {
-                  setFailedImages((prev) => new Set(prev).add(url));
-                  console.log(`Failed to load image for ${banner.title}: ${url}`);
-                }
-                e.target.src = "/placeholder.png";
-              }}
+              // onError={(e) => {
+              //   const url = getImageUrl(banner.image);
+              //   if (!failedImages.has(url)) {
+              //     setFailedImages((prev) => new Set(prev).add(url));
+              //     console.log(
+              //       `Failed to load image for ${banner.title}: ${url}`
+              //     );
+              //   }
+              //   e.target.src = "/";
+              // }}
             />
             <div className="absolute top-5 left-7">
               <h2

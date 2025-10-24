@@ -96,10 +96,10 @@ const MainLayout = () => {
           src={getImageUrl(logo)}
           alt="Logo"
           className="max-w-full h-auto"
-          onError={(e) => {
-            e.target.src = "/logo.png";
-            console.log(`Failed to load logo image: ${getImageUrl(logo)}`);
-          }}
+          // onError={(e) => {
+          //   e.target.src = "/logo.png";
+          //   console.log(`Failed to load logo image: ${getImageUrl(logo)}`);
+          // }}
         />
       </div>
       <div className="w-full md:w-[60%] lg:w-[40%] xl:w-[30%] bg-[#eef6fb] overflow-y-auto">

@@ -6,7 +6,7 @@ import { IoCloseSharp } from "react-icons/io5";
 import { useSelector } from "react-redux";
 
 const AccountStatement = () => {
-  const { singleUser } = useSelector((state) => state.auth);
+
   const { user,balance } = useContext(AuthContext); 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -62,9 +62,7 @@ const AccountStatement = () => {
               </tr>
               <tr>
                 <td className="py-2 font-bold">Remark</td>
-                <td className="py-2 text-right text-[#6f88a5] font-bold">
-                  {singleUser?.remark || "--"}
-                </td>
+                <td className="py-2 text-right">--</td>
               </tr>
             </tbody>
           </table>

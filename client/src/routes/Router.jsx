@@ -48,6 +48,7 @@ import LoginForm from "@/pages/LoginForm";
 import PrivateRoute from "./PrivateRoute";
 import Deposit from "@/pages/Deposit/Deposit";
 import Withdraw from "@/pages/Withdraw/WIthdraw";
+import DepositForm from "@/pages/Deposit/DepositForm";
 
 const router = createBrowserRouter([
   {
@@ -115,6 +116,10 @@ const router = createBrowserRouter([
       { path: "/kyc", element: <Kyc /> },
       { path: "/responsible-gaming", element: <ResponsibleGaming /> },
     ],
+  },
+  {
+    path: "/deposit/:id",
+    element: <DepositForm />,
   },
   {
     path: "/leagues",
