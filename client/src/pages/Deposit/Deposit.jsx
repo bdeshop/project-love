@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 
+
 const Deposit = () => {
   const [selectedMethod, setSelectedMethod] = useState("");
   const [paymentType, setPaymentType] = useState("");
   const [amount, setAmount] = useState("");
+  
   const [settings, setSettings] = useState({
     currencies: ["PBU"],
     currencies2: ["BDT"],
@@ -56,7 +58,7 @@ const Deposit = () => {
     if (isNaN(parsedAmount) || parsedAmount < settings.min_amount || parsedAmount > settings.max_amount) return toast.error(`ভ্যালিড অ্যামাউন্ট লিখুন (${settings.min_amount} - ${settings.max_amount})।`);
 
     navigate(`/deposit/${selectedMethod}`, {
-      state: { paymentType, amount: parsedAmount, pbuAmount, totalPBU },
+      state: { paymentType, amount: parsedAmount, pbuAmount, totalPBU ,selectedMethod},
     });
   };
 

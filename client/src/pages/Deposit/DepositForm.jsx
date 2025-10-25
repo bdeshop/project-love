@@ -3,6 +3,7 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { FaCopy } from "react-icons/fa";
 import axios from "axios";
 import { AuthContext } from "@/context/AuthContext";
+import { useToasts } from "react-toast-notifications";
 
 const DepositForm = () => {
   const [transactionId, setTransactionId] = useState("");
@@ -13,6 +14,7 @@ const DepositForm = () => {
   const { state: locationState } = useLocation(); // renamed to avoid confusion
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+  const { addToast } = useToasts();
   const userId = user?._id;
   const [paymentSettings, setPaymentSettings] = useState(null);
 
@@ -53,6 +55,7 @@ const DepositForm = () => {
     const pbuAmount = parseFloat(locationState?.pbuAmount) || (amount / 100); // 1 PBU = 100 BDT
     const totalPBU = parseFloat(locationState?.totalPBU) || pbuAmount;
     const paymentType = locationState?.paymentType || "unknown";
+    const selectedMethod = locationState?.selectedMethod || "unknown";
 
     if (!locationState || isNaN(amount) || amount <= 0) {
 
@@ -71,7 +74,7 @@ const DepositForm = () => {
         userId,
         transactionId,
         number,
-
+        selectedMethod,
         paymentType,
         amount,
         currency: "BDT",
@@ -81,6 +84,10 @@ const DepositForm = () => {
       setTransactionId("");
       setNumber("");
       navigate("/"); // হোম পেজে নেভিগেট
+      addToast("Deposit Request Send successful", {
+        appearance: "success",
+        autoDismiss: true,
+      });
     } catch (err) {
       console.error("Error submitting transaction:", err.response?.data || err.message);
 
@@ -97,7 +104,7 @@ const DepositForm = () => {
   };
 
   if (loading) {
-    return <div className="text-center mt-10 text-white">লোড হচ্ছে...</div>;
+    return <div className="text-center mt-10 text-white">Loading...</div>;
   }
 
   if (error) {
@@ -105,7 +112,7 @@ const DepositForm = () => {
   }
 
   if (!paymentSettings) {
-    return <div className="text-center mt-10 text-white">কোনো ডেটা পাওয়া যায়নি</div>;
+    return <div className="text-center mt-10 text-white">No Data</div>;
   }
 
   return (
