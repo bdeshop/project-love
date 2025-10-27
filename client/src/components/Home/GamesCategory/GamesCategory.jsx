@@ -7,7 +7,7 @@ import { TbSortAZ } from "react-icons/tb";
 const GamesCategory = ({ selectedGames }) => {
   const [selectedCategory, setSelectedCategory] = useState("in-play");
   const subcategories = [
-    { icon: ImBooks, title: "Catalog", value: "catalog", route: "" },
+    // { icon: ImBooks, title: "Catalog", value: "catalog", route: "" },
     { icon: BsFire, title: "Latest", value: "latest", route: "" },
     { icon: TbSortAZ, title: "A-Z", value: "a-z", route: "" },
   ];
@@ -46,10 +46,10 @@ const GamesCategory = ({ selectedGames }) => {
         </h2>
         <div className="grid grid-cols-3 gap-2">
           {selectedGames?.map((game) => (
-            <Link to={`/games/demo/${game._id}`} key={game.image}>
+            <Link to={`/games/live/${game.game_uuid}`} key={game.image}>
               <img
                 className="rounded-xl w-full h-[100px] md:h-[150px]"
-                src={`${import.meta.env.VITE_BASE_API_URL}${game.image}`}
+                src={`${import.meta.env.VITE_API_URL}/${game.image}`}
                 alt=""
               />
             </Link>

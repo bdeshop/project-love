@@ -23,12 +23,12 @@ const Navbar = () => {
   const { user, reload, loading, balance, logo } = useContext(AuthContext);
 
   const baseUrl = import.meta.env.VITE_API_URL;
-  
+
   const logoUrl = logo ? `${baseUrl}${logo}` : null;
 
   useEffect(() => {
-    console.log(baseUrl)
-    console.log(logo)
+    console.log(baseUrl);
+    console.log(logo);
     console.log(logoUrl);
   }, [logoUrl]);
 
@@ -104,7 +104,8 @@ const Navbar = () => {
                 <div className="flex flex-row items-center gap-1 text-sm">
                   <p>PBU {balance || "0.00"}</p>
                   <p className="text-red-500">
-                    <span className="font-semibold text-black">Exp</span> (0.00)
+                    <span className="font-semibold text-black">Exp</span>{" "}
+                    {((balance || 0) * 100).toFixed(2)}
                   </p>
                 </div>
               </div>
@@ -115,9 +116,7 @@ const Navbar = () => {
             </div>
           ) : (
             <div className="flex items-center justify-center gap-3">
-              <Link
-                to="/signup"
-              >
+              <Link to="/signup">
                 <PrimaryButton icon={FiPlusCircle} background={""}>
                   SignUp
                 </PrimaryButton>

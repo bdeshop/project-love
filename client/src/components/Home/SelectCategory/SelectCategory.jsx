@@ -20,31 +20,31 @@ const categories = [
   {
     title: "Live",
     image: liveIcon,
-    value: "live",
+    value: "Live",
     description: "Live streaming and events can be managed here.",
   },
   {
     title: "Table",
     image: tableIcon,
-    value: "table",
+    value: "Table",
     description: "Manage table games and settings here.",
   },
   {
     title: "Slot",
     image: slotIcon,
-    value: "slot",
+    value: "Slot",
     description: "Slots games management and preferences.",
   },
   {
     title: "Fishing",
     image: fishingIcon,
-    value: "fishing",
+    value: "Fishing",
     description: "Manage fishing game settings.",
   },
   {
     title: "Egame",
     image: endgameIcon,
-    value: "egame",
+    value: "Egame",
     description: "Egames management and preferences.",
   },
 ];
@@ -54,6 +54,7 @@ export function SelectCategory() {
   const activatedGames = games?.filter((game) => game.isActive);
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
   const [currentPage, setCurrentPage] = useState(0);
+  const [categoryGames, setCategoryGames] = useState([]);
   const categoryContainerRef = useRef(null);
   const [isHoveredValue, setIsHoveredValue] = useState("");
   const [webMenuBgColor, setWebMenuBgColor] = useState("#ffffff");
@@ -63,7 +64,7 @@ export function SelectCategory() {
   const [webMenuHoverTextColor, setWebMenuHoverTextColor] = useState("#cccccc");
 
   const filteredGames = activatedGames?.filter(
-    (game) => game.category === selectedCategory.value
+    (game) => game.category == selectedCategory.value
   );
 
   useEffect(() => {
@@ -79,9 +80,34 @@ export function SelectCategory() {
       })
       .catch((err) => {
         console.error("Fetch error:", err);
-
       });
   }, []);
+
+  // Fetch merged games for non-sports categories from backend
+  useEffect(() => {
+    const fetchCategoryGames = async () => {
+      if (!selectedCategory || selectedCategory.value === "sports") {
+        setCategoryGames([]);
+        return;
+      }
+
+      try {
+        const res = await axios.get(
+          `${
+            import.meta.env.VITE_API_URL
+          }/games/by-category?category=${encodeURIComponent(
+            selectedCategory.value
+          )}`
+        );
+        setCategoryGames(res.data.data || []);
+      } catch (err) {
+        console.error("Error fetching category games:", err);
+        setCategoryGames([]);
+      }
+    };
+
+    fetchCategoryGames();
+  }, [selectedCategory]);
 
   const handleScroll = () => {
     const scrollLeft = categoryContainerRef.current.scrollLeft;
@@ -190,7 +216,12 @@ export function SelectCategory() {
           </div>
         ) : (
           <div className="animate-fade-in">
-            <GamesCategory selectedGames={filteredGames} />
+            {/* pass merged category games from backend; fallback to filteredGames if empty */}
+            <GamesCategory
+              selectedGames={
+                categoryGames.length ? categoryGames : filteredGames
+              }
+            />
           </div>
         )}
       </div>

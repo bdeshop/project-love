@@ -60,53 +60,100 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/games/demo/:id",
+        path: "/games/live/:id",
         element: (
           <PrivateRoute>
-            {" "}
-            <DemoGame />{" "}
+            <DemoGame />
           </PrivateRoute>
         ),
       },
       {
         path: "/balance-overview",
-        element: <PrivateRoute> <BalanceOverview />  </PrivateRoute>,
+        element: (
+          <PrivateRoute>
+            {" "}
+            <BalanceOverview />{" "}
+          </PrivateRoute>
+        ),
       },
       {
         path: "/current-bets",
-        element:  <PrivateRoute> <CurrentBets /> </PrivateRoute>,
+        element: (
+          <PrivateRoute>
+            {" "}
+            <CurrentBets />{" "}
+          </PrivateRoute>
+        ),
       },
       {
         path: "/account-statement",
-        element: <PrivateRoute> <AccountStatement /> </PrivateRoute>,
+        element: (
+          <PrivateRoute>
+            {" "}
+            <AccountStatement />{" "}
+          </PrivateRoute>
+        ),
       },
       {
         path: "/bets-history",
-        element: <PrivateRoute><BetsHistory /> </PrivateRoute>,
+        element: (
+          <PrivateRoute>
+            <BetsHistory />{" "}
+          </PrivateRoute>
+        ),
       },
       {
         path: "/profit-loss",
-        element: <PrivateRoute> <ProfitAndLoss /> </PrivateRoute>,
+        element: (
+          <PrivateRoute>
+            {" "}
+            <ProfitAndLoss />{" "}
+          </PrivateRoute>
+        ),
       },
       {
         path: "/activity-log",
-        element: <PrivateRoute> <ActivityLog /> </PrivateRoute>,
+        element: (
+          <PrivateRoute>
+            {" "}
+            <ActivityLog />{" "}
+          </PrivateRoute>
+        ),
       },
       {
         path: "/my-profile",
-        element: <PrivateRoute><MyProfile /> </PrivateRoute>,
+        element: (
+          <PrivateRoute>
+            <MyProfile />{" "}
+          </PrivateRoute>
+        ),
       },
       {
         path: "/setting",
-        element: <PrivateRoute> <Settings /> </PrivateRoute>,
+        element: (
+          <PrivateRoute>
+            {" "}
+            <Settings />{" "}
+          </PrivateRoute>
+        ),
       },
       {
         path: "/deposit",
-        element: <PrivateRoute> <Deposit /> </PrivateRoute>,
+        element: (
+          <PrivateRoute>
+            {" "}
+            <Deposit />{" "}
+          </PrivateRoute>
+        ),
       },
       {
         path: "/withdraw",
-        element: <PrivateRoute> <Withdraw /> </PrivateRoute>,
+        element: (
+          <PrivateRoute>
+            {" "}
+            <Withdraw />{" "}
+          </PrivateRoute>
+        ),
       },
       { path: "/login", element: <Login /> },
       { path: "/signup", element: <Register /> },
