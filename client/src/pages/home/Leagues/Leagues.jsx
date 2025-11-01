@@ -40,7 +40,7 @@ const Leagues = () => {
   };
 
   return (
-    <div className="mt-14">
+    <div className="mt-10">
       {/* Conditionally render the leagueCategories only when no accordion is selected */}
       {!selectedAccordion && (
         <div className="bg-[#333333] flex items-center gap-3 p-3">
@@ -71,7 +71,9 @@ const Leagues = () => {
                   >
                     <div className="flex items-center gap-2">
                       <FaRegArrowAltCircleUp />
-                      <h3 className="text-sm sm:text-base font-medium">{accordion.title}</h3>
+                      <h3 className="text-sm sm:text-base font-medium">
+                        {accordion.title}
+                      </h3>
                     </div>
                     <MdOutlineKeyboardArrowRight className="text-2xl" />
                   </div>

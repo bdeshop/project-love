@@ -48,7 +48,7 @@ const GamesCategory = ({ selectedGames }) => {
           {selectedGames?.map((game) => (
             <Link to={`/games/live/${game.game_uuid}`} key={game.image}>
               <img
-                className="rounded-xl w-full h-[100px] md:h-[150px]"
+                className="rounded-xl w-full h-[100px] md:h-[100px]"
                 src={`${import.meta.env.VITE_API_URL}/${game.image}`}
                 alt=""
               />

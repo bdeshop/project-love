@@ -10,37 +10,40 @@ import { Button } from "@/components/ui/button";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import axios from "axios";
 
-
 const BannerSlider = () => {
   const [sliders, setSliders] = useState([]);
   const [notice, setNotice] = useState(null);
   const [api, setApi] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
-    const [title, setTitle] = useState("");
+  const [title, setTitle] = useState("");
 
   // ✅ স্লাইডার ডাটা ফেচ
   const fetchSliders = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/sliders`);
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/sliders`
+      );
       setSliders(res.data);
       console.log("Fetched sliders:", res.data);
     } catch (err) {
       console.error("Error fetching sliders:", err);
-
     }
   };
- // ✅ নোটিস ফেচ
+  // ✅ নোটিস ফেচ
   const fetchNotice = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/notices`);
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/notices`
+      );
       console.log("Response data:", res.data);
       if (res.data) {
         setTitle(res.data.title || "");
-
       }
     } catch (err) {
-      console.error("Fetch error details:", err.response ? err.response.data : err.message);
- 
+      console.error(
+        "Fetch error details:",
+        err.response ? err.response.data : err.message
+      );
     }
   };
 

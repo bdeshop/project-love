@@ -86,7 +86,7 @@ const Casino = () => {
 
   return (
     <div>
-      <div className="relative mt-14">
+      <div className="relative mt-10">
         <div
           ref={categoryContainerRef}
           className="flex justify-start px-2 pt-2 pb-8 gap-2 w-full overflow-x-auto no-scrollbar h-auto"

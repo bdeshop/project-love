@@ -81,7 +81,7 @@ const Navbar = () => {
             color: textColor,
             fontSize: fontSize ? fontSize : "14px",
           }}
-          className="flex items-center justify-between px-3 py-2 "
+          className="flex items-center justify-between px-3 py-0 "
         >
           {/* Left side */}
           <div className="flex flex-row items-center gap-2">
@@ -92,7 +92,7 @@ const Navbar = () => {
               />
             )}
             <Link to="/">
-              <img className="w-[84px] h-[26px]" src={logoUrl} alt="Logo" />
+              <img className="w-[100px] h-[40px]" src={logoUrl} alt="Logo" />
             </Link>
           </div>
 
@@ -100,11 +100,11 @@ const Navbar = () => {
           {user ? (
             <div className="flex flex-row items-center gap-2">
               <div className="flex flex-col items-start">
-                <p>@{user?.username}</p>
+                <p className="font-bold text-sm">@{user?.username}</p>
                 <div className="flex flex-row items-center gap-1 text-sm">
                   <p>PBU {balance || "0.00"}</p>
-                  <p className="text-red-500">
-                    <span className="font-semibold text-black">Exp</span>{" "}
+                  <p className="text-white">
+                    <span className="font-semibold text-black">BDT</span>{" "}
                     {((balance || 0) * 100).toFixed(2)}
                   </p>
                 </div>

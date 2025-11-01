@@ -54,10 +54,10 @@ const DemoGame = () => {
           `${import.meta.env.VITE_API_URL}/games/play-game`,
           body
         );
-        console.log("play-game response:", resp.data);
+        console.log("play-game response:", resp?.data?.data);
 
         const link =
-          resp.data.joyhobeResponse || resp.data.gameLink || resp.data.link;
+          resp?.data?.data || resp?.data?.gameLink || resp?.data?.link;
         if (link) {
           setGameLink(link);
         } else {

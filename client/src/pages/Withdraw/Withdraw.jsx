@@ -5,7 +5,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 
-
 const Withdraw = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
   const [paymentType, setPaymentType] = useState("");
@@ -13,14 +12,27 @@ const Withdraw = () => {
   const [number, setNumber] = useState("");
   const { Balance, user } = useContext(AuthContext);
   const { addToast } = useToasts();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const userId = user._id;
 
   const amountOptions = [100, 500, 1000, 2000, 5000, 10000, 20000, 25000];
   const paymentOptions = [
-    { id: "nagad", name: "Nagad", image: "https://i.ibb.co.com/sdgCF1HP/icon-256x256.png" },
-    { id: "bkash", name: "Bkash", image: "https://i.ibb.co.com/kszjQzZn/unnamed.webp" },
-    { id: "rocket", name: "Rocket", image: "https://i.ibb.co.com/S4JZ706r/dutch-bangla-rocket-logo-png-seeklogo-317692.png" },
+    {
+      id: "nagad",
+      name: "Nagad",
+      image: "https://i.ibb.co.com/sdgCF1HP/icon-256x256.png",
+    },
+    {
+      id: "bkash",
+      name: "Bkash",
+      image: "https://i.ibb.co.com/kszjQzZn/unnamed.webp",
+    },
+    {
+      id: "rocket",
+      name: "Rocket",
+      image:
+        "https://i.ibb.co.com/S4JZ706r/dutch-bangla-rocket-logo-png-seeklogo-317692.png",
+    },
   ];
   const paymentTypes = ["Personal", "Agent"]; // আপনার সিস্টেমের টাইপ
 
@@ -47,19 +59,18 @@ const Withdraw = () => {
         pbuAmount,
         number,
       });
-     
+
       setAmount(0);
       setNumber("");
       setPaymentMethod("");
       setPaymentType("");
-      navigate('/withdraw');
+      navigate("/withdraw");
       addToast("Withdraw Request Send successful", {
         appearance: "success",
         autoDismiss: true,
       });
-      
     } catch (err) {
-        addToast("Withdraw Request Send Failed", {
+      addToast("Withdraw Request Send Failed", {
         appearance: "error",
         autoDismiss: true,
       });
@@ -67,7 +78,7 @@ const Withdraw = () => {
   };
 
   return (
-    <div className="bg-gray-900 min-h-screen text-white mt-14">
+    <div className="bg-gray-900 min-h-screen text-white mt-10">
       {/* Payment Method */}
       <div className="p-8 border-b border-gray-700">
         <p className="font-bold mb-3 border-b border-gray-400 pb-3">
@@ -76,11 +87,17 @@ const Withdraw = () => {
         <div className="flex justify-between items-center gap-2">
           {paymentOptions.map((value) => (
             <div
-              className={`items-center py-2 px-5 border border-solid cursor-pointer ${paymentMethod === value.id ? "border-green-400 border-4" : ""}`}
+              className={`items-center py-2 px-5 border border-solid cursor-pointer ${
+                paymentMethod === value.id ? "border-green-400 border-4" : ""
+              }`}
               key={value.id}
               onClick={() => setPaymentMethod(value.id)}
             >
-              <img src={value.image} alt={value.name} className="w-full h-10 rounded-4xl" />
+              <img
+                src={value.image}
+                alt={value.name}
+                className="w-full h-10 rounded-4xl"
+              />
               <p className="text-center">{value.name}</p>
             </div>
           ))}
@@ -133,7 +150,11 @@ const Withdraw = () => {
             <button
               key={value}
               onClick={() => handleQuickAmount(value)}
-              className={`px-2 py-1 rounded ${amount === value ? "bg-green-500 text-black font-bold" : "bg-gray-700"}`}
+              className={`px-2 py-1 rounded ${
+                amount === value
+                  ? "bg-green-500 text-black font-bold"
+                  : "bg-gray-700"
+              }`}
             >
               {value}
             </button>
@@ -155,14 +176,21 @@ const Withdraw = () => {
       {/* Instruction */}
       <div className="bg-black m-3 border border-gray-700 rounded-lg">
         <p className="p-4 font-bold">
-          <span className="flex items-center gap-1"><FaInfoCircle size={20} className="text-lg mt-1" /> Reminder:</span>
-          <br /> 1. Please double check the recipient's account details before proceeding. <br /> 2. DO NOT share your account with anyone to avoid losing funds or money.
+          <span className="flex items-center gap-1">
+            <FaInfoCircle size={20} className="text-lg mt-1" /> Reminder:
+          </span>
+          <br /> 1. Please double check the recipient's account details before
+          proceeding. <br /> 2. DO NOT share your account with anyone to avoid
+          losing funds or money.
         </p>
       </div>
 
       {/* Submit Button */}
       <div className="p-4">
-        <button onClick={handleSubmit} className="w-full bg-green-500 text-white font-bold py-3 rounded">
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-green-500 text-white font-bold py-3 rounded"
+        >
           Submit
         </button>
       </div>

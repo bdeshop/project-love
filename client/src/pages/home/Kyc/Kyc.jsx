@@ -23,8 +23,8 @@ const Kyc = () => {
           choices or rights, we will explain these to you.
         </p>
         <p>
-          This Privacy Policy explains how VELKI uses your personal information
-          when you are using one of our website.
+          This Privacy Policy explains how enjoy365uses your personal
+          information when you are using one of our website.
         </p>
         <p>
           If you do not agree with any statements contained within this Privacy
@@ -45,7 +45,7 @@ const Kyc = () => {
           Who is in control of your information?
         </p>
         <p>
-          Throughout this Privacy Policy, " VELKI ", "we", "our" and "us"
+          Throughout this Privacy Policy, " enjoy365", "we", "our" and "us"
           relates to Mayasofttech Ltd, a limited liability company, registered
           in Belize. We control the ways your Personal Data is collected and the
           purposes for which your Personal Data is used by VELKI, acting as the
@@ -55,7 +55,7 @@ const Kyc = () => {
         <p className="text-xl font-bold">Our Data Protection Officer</p>
         <h2>
           If you have concerns or would like any further information about how
-          VELKI handles your personal information, you can contact our Data
+          enjoy365handles your personal information, you can contact our Data
           Protection Officer.
         </h2>
       </div>

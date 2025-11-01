@@ -28,7 +28,7 @@ const Sports = () => {
     },
   ];
   return (
-    <div className="mt-14">
+    <div className="mt-10">
       <div className="px-3 opacity-90 text-black bg-white w-full py-1">
         <div className="flex items-center gap-4">
           <HiOutlineMicrophone className="text-xl md:text-2xl" />
@@ -41,7 +41,7 @@ const Sports = () => {
                 market will be voided and the player account will be locked.
               </li>
               <li>
-                WELCOME TO VELKI ! ENJOY BETTING IN MATCH ODDS, FANCY & LIVE
+                WELCOME TO enjoy365! ENJOY BETTING IN MATCH ODDS, FANCY & LIVE
                 CASINO
               </li>
             </ul>
