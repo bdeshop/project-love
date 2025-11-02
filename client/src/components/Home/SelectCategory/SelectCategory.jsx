@@ -143,7 +143,7 @@ export function SelectCategory() {
             fontSize: webMenuFontSize ? `${webMenuFontSize}px` : "14px",
           }}
           ref={categoryContainerRef}
-          className="flex justify-start px-2 pt-2 pb-8 gap-2 w-full overflow-x-auto no-scrollbar h-auto bg-[#333333] scroll-smooth"
+          className="flex justify-start px-2 pt-2 pb-2 gap-2 w-full overflow-x-auto no-scrollbar h-auto bg-[#333333] scroll-smooth"
         >
           {categories.map((category) => (
             <button
@@ -164,7 +164,7 @@ export function SelectCategory() {
               onMouseEnter={() => setIsHoveredValue(category.value)}
               onMouseLeave={() => setIsHoveredValue("")}
               key={category.value}
-              className={`min-w-20 categoryButton min-h-20 p-4 text-lg flex flex-col items-center justify-center gap-1 text-[#828486] hover:text-[#f4c004] hover:bg-[#1b1f23] rounded-lg `}
+              className={`min-w-20 categoryButton min-h-20 p-2 text-lg flex flex-col items-center justify-center gap-1 text-[#828486] hover:text-[#f4c004] hover:bg-[#1b1f23] rounded-lg `}
               onClick={() => setSelectedCategory(category)}
             >
               <p className="font-medium"> {category.title}</p>

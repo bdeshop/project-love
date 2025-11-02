@@ -87,7 +87,7 @@ const Navbar = () => {
           <div className="flex flex-row items-center gap-2">
             {user && (
               <IoMenu
-                className="text-black text-3xl cursor-pointer"
+                className="text-white text-3xl cursor-pointer"
                 onClick={toggleSidebar}
               />
             )}
@@ -104,7 +104,7 @@ const Navbar = () => {
                 <div className="flex flex-row items-center gap-1 text-sm">
                   <p>PBU {balance || "0.00"}</p>
                   <p className="text-white">
-                    <span className="font-semibold text-black">BDT</span>{" "}
+                    <span className="font-semibold text-white">BDT</span>{" "}
                     {((balance || 0) * 100).toFixed(2)}
                   </p>
                 </div>
@@ -115,10 +115,17 @@ const Navbar = () => {
               />
             </div>
           ) : (
-            <div className="flex items-center justify-center gap-3">
-              <Link to="/signup">
-                <PrimaryButton icon={FiPlusCircle} background={""}>
-                  SignUp
+            <div className="flex items-center justify-center gap-3 ">
+
+   
+
+              <Link to={import.meta.env.VITE_WITHOUT_SELF_REGISTER === "true" ? "/signup" : "/"}>
+                <PrimaryButton
+                  icon={FiPlusCircle}
+                  background={""}
+                //  disabled={import.meta.env.VITE_WITHOUT_SELF_REGISTER === "false"}
+                >
+                  {import.meta.env.VITE_WITHOUT_SELF_REGISTER ? "Agent List" : "SignUp"}
                 </PrimaryButton>
               </Link>
               <Link to="/login">

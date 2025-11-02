@@ -8,7 +8,7 @@ import {
 } from "react-icons/fa";
 import { FaShield } from "react-icons/fa6";
 import { IoIosUnlock } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, useContext } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,7 @@ const Login = () => {
   // Fetch login image
   const fetchLoginImage = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin-login-image`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/login-image`);
       if (res.data && res.data.loginImageUrl) {
         setLoginImage(res.data.loginImageUrl);
         setId(res.data._id);
@@ -153,7 +153,7 @@ const Login = () => {
         <img
           src={getImageUrl(loginImage)}
           alt="Login Banner"
-          className="w-full max-w-md h-40 object-cover rounded-lg"
+          className="w-full max-w-md h-60 object-cover rounded-lg"
           // onError={(e) => {
           //   e.target.src = "/placeholder.png";
           //   console.log(`Failed to load login image: ${getImageUrl(loginImage)}`);
@@ -250,7 +250,7 @@ const Login = () => {
           <div className="flex items-center justify-center">
             <Button
               type="submit"
-              className={`bg-[#ffc800] text-black w-1/3 text-base py-6 ${
+              className={`bg-red-500 text-white w-1/3 text-base hover:bg-red-700 py-6 ${
                 isLoginDisabled ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={isLoginDisabled || loading}
@@ -259,6 +259,16 @@ const Login = () => {
             </Button>
           </div>
         </form>
+
+
+        <p className="text-center text-sm mt-4">
+          Don't have an account yet?{" "}
+          <Link to="/register">
+            <Button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+              Register
+            </Button>
+          </Link>
+        </p>
       </div>
     </div>
   );

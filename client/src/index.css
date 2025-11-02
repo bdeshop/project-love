@@ -84,3 +84,31 @@
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+/* পুরো পেজের স্ক্রল বার লুকানো */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden; /* এটা সবচেয়ে গুরুত্বপূর্ণ */
+}
+
+/* যদি কোনো কনটেইনারে স্ক্রল থাকে, সেটাও লুকাও */
+#root {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* শুধু স্ক্রল বার লুকাতে চাইলে, কিন্তু স্ক্রল ফাংশন রাখতে চাইলে */
+::-webkit-scrollbar {
+  display: none;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-thumb {
+  display: none;
+}
+
+/* Firefox এর জন্য */
+* {
+  scrollbar-width: none;
+}

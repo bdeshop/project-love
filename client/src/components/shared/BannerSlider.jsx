@@ -96,7 +96,7 @@ const BannerSlider = () => {
             <CarouselItem key={item._id}>
               <div className="relative">
                 <img
-                  className="w-full h-[200px] object-cover"
+                  className="w-full h-[150px] object-cover"
                   src={`${import.meta.env.VITE_API_URL}${item.imageUrl}`}
                   alt={`Slide ${index + 1}`}
                 />

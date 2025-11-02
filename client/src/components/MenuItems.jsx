@@ -28,12 +28,15 @@ const menuItems = [
   },
   { id: 4, label: "Bets History", Icon: GoHistory, link: "/bets-history" },
   
+
   {
     id: 5,
     label: "Deposit",
     Icon: PiHandDepositFill,
     link: "/deposit",
+    hide: import.meta.env.VITE_WITHOUT_SELF_REGISTER === "false",
   },
+
   {
     id: 6,
     label: "Profit & Loss",
@@ -45,6 +48,7 @@ const menuItems = [
     label: "Withdraw",
     Icon: PiHandWithdrawFill ,
     link: "/withdraw",
+    hide: import.meta.env.VITE_WITHOUT_SELF_REGISTER === "false",
   },
   { id: 8, label: "Activity Log", Icon: FiBarChart, link: "/activity-log" },
   { id: 9, label: "My Profile", Icon: ImProfile, link: "/my-profile" },

@@ -42,10 +42,10 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         />
       </div>
       <ul className=" bg-white mx-6">
-        {menuItems.map(({ id, label, Icon, link, count }) => (
+        {menuItems.map(({ id, label, Icon, link, count , hide }) => (
           <li
             key={id}
-            className="flex items-center gap-2 p-3 border-b border-b-black border-opacity-10"
+            className={`flex items-center gap-2 p-3 border-b border-b-black border-opacity-10 ${hide ? "hidden" : ""}`}
           >
             <Link
               to={link}
