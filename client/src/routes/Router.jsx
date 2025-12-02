@@ -118,7 +118,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/deposit/:id",
+    path: "/deposit/payment-method/:id",
     element: <DepositForm />,
   },
   {

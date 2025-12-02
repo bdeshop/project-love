@@ -34,7 +34,7 @@ const BalanceOverview = () => {
           <h1 className="text-xl font-bold text-white mb-2">Your Balances</h1>
           <div className="flex flex-row items-center gap-3">
             <p className="text-sm font-bold bg-yellow-500 py-0.5 px-1 rounded-lg">
-              USD
+              PBU
             </p>
             <p className="text-2xl font-bold text-white leading-3">
               {balance || "0.00"}

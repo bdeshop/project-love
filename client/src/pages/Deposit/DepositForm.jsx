@@ -28,7 +28,7 @@ const DepositForm = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/deposit/${id}`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/deposit/payment-method/${id}`);
         console.log("API Response for payment settings:", res.data); // ডিবাগিং
         setPaymentSettings(res.data);
       } catch (err) {

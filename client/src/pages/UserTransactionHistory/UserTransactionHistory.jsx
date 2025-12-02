@@ -61,7 +61,7 @@ const UserTransactionHistory = () => {
                     {item.status === "pending" ? "pending" : item.status === "approved" ? "approved" : "cancel"}
                   </span>
                 </td>
-                <td className="border p-2">{new Date(item.createdAt).toLocaleDateString('bn-BD')}</td>
+                <td className="border p-2">{new Date(item.createdAt).toLocaleDateString('en-EN')}</td>
               </tr>
             ))}
           </tbody>

@@ -57,7 +57,7 @@ const Deposit = () => {
     if (!paymentType) return toast.error("পেমেন্ট টাইপ সিলেক্ট করুন।");
     if (isNaN(parsedAmount) || parsedAmount < settings.min_amount || parsedAmount > settings.max_amount) return toast.error(`ভ্যালিড অ্যামাউন্ট লিখুন (${settings.min_amount} - ${settings.max_amount})।`);
 
-    navigate(`/deposit/${selectedMethod}`, {
+    navigate(`/deposit/payment-method/${selectedMethod}`, {
       state: { paymentType, amount: parsedAmount, pbuAmount, totalPBU ,selectedMethod},
     });
   };

@@ -52,7 +52,7 @@ const Withdraw = () => {
       setNumber("");
       setPaymentMethod("");
       setPaymentType("");
-      navigate('/withdraw');
+      navigate('/');
       addToast("Withdraw Request Send successful", {
         appearance: "success",
         autoDismiss: true,
